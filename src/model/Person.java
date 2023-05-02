@@ -5,15 +5,15 @@ import java.util.Objects;
 
 public abstract class Person {
 
-    private String name;
-    private String socialName;
-    private Date birthday;
+    protected String name;
+    protected String socialName;
+    protected Date birthday;
 
-    private int cpf;
-    private int rg;
+    protected int cpf;
+    protected int rg;
 
-    private String email;
-    private int phoneNumber;
+    protected String email;
+    protected int phoneNumber;
 
     public Person(String name, String socialName, Date birthday, int cpf, int rg, String email, int phoneNumber) {
         this.name = name;
