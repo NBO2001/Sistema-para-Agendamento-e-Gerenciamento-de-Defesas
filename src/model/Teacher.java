@@ -2,7 +2,7 @@ package model;
 
 import java.util.Date;
 
-public class Teacher extends Person {
+public final class Teacher extends Person {
     private int teacherId;
 
     public Teacher(String name, String socialName, Date birthday, int cpf, int rg, String email, int phoneNumber, int teacherId) {
