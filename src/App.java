@@ -1,4 +1,4 @@
-import view.Login;
+import view.login.Login;
 
 public class App {
 
