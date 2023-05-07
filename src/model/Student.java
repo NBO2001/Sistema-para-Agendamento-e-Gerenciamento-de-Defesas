@@ -7,13 +7,13 @@ public final class Student extends Person{
     private int typeStudent;
 
     private int studentId;
-    public Student(String name, String socialName, Date birthday, int cpf, int rg, String email, int phoneNumber, int typeStudent, int studentId) {
+    public Student(String name, String socialName, Date birthday, String cpf, String rg, String email, int phoneNumber, int typeStudent, int studentId) {
         super(name, socialName, birthday, cpf, rg, email, phoneNumber);
         setStudentId(studentId);
         setTypeStudent(typeStudent);
     }
 
-    public Student(String name, Date birthday, int cpf, int rg, String email, int typeStudent, int studentId) {
+    public Student(String name, Date birthday, String cpf, String rg, String email, int typeStudent, int studentId) {
         super(name, birthday, cpf, rg, email);
         setStudentId(studentId);
         setTypeStudent(typeStudent);

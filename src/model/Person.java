@@ -5,17 +5,18 @@ import java.util.Objects;
 
 public abstract class Person {
 
+    protected int personId;
     protected String name;
     protected String socialName;
     protected Date birthday;
 
-    protected int cpf;
-    protected int rg;
+    protected String cpf;
+    protected String rg;
 
     protected String email;
     protected int phoneNumber;
 
-    public Person(String name, String socialName, Date birthday, int cpf, int rg, String email, int phoneNumber) {
+    public Person(String name, String socialName, Date birthday, String cpf, String rg, String email, int phoneNumber) {
         this.name = name;
         this.socialName = socialName;
         this.birthday = birthday;
@@ -25,7 +26,7 @@ public abstract class Person {
         this.phoneNumber = phoneNumber;
     }
 
-    public Person(String name, Date birthday, int cpf, int rg, String email) {
+    public Person(String name, Date birthday, String cpf, String rg, String email) {
         this(name, null, birthday, cpf, rg, email, 0);
     }
 
@@ -54,19 +55,19 @@ public abstract class Person {
         this.birthday = birthday;
     }
 
-    public int getCpf() {
+    public String getCpf() {
         return cpf;
     }
 
-    public void setCpf(int cpf) {
+    public void setCpf(String cpf) {
         this.cpf = cpf;
     }
 
-    public int getRg() {
+    public String getRg() {
         return rg;
     }
 
-    public void setRg(int rg) {
+    public void setRg(String rg) {
         this.rg = rg;
     }
 
