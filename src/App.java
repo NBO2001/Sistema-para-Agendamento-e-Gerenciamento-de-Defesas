@@ -1,3 +1,7 @@
+import model.ConnectionBase;
+import model.Session;
+import model.SessionManager;
+import utils.Utils;
 import view.cadastro.Cadastro;
 import view.cadastroaluno.CadastroAluno;
 import view.cadastrodefesa.CadastroDefesaVariant01;
@@ -11,14 +15,12 @@ public class App {
 
     public static void main(String[] args) {
 
-        Login login = new Login();
-        //CadastroProfessor cadastroProfessor = new CadastroProfessor();
+        SessionManager sessionManager = new SessionManager();
 
-        //CadastroUsuario cadastroUsuario = new CadastroUsuario();
-        // login.setVisible(true);
+        Session session = sessionManager.login("admin", "admin");
 
-//        CadastroAluno cadastroAluno = new CadastroAluno();
-        CadastroDefesaVariant03 cadastroDefesaVariant03 = new CadastroDefesaVariant03();
-        cadastroDefesaVariant03.setVisible(true);
+        System.out.println(session);
+
+
     }
 }

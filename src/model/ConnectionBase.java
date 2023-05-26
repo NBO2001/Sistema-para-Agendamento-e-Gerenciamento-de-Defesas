@@ -6,7 +6,8 @@ import java.sql.SQLException;
 
 public class ConnectionBase {
 
-    private static String url = "jdbc:sqlite:/home/natanael/Sistema-para-Agendamento-e-Gerenciamento-de-Defesas/base/base.sqlite3";
+//    private static String url = "jdbc:sqlite:/home/natanael/Sistema-para-Agendamento-e-Gerenciamento-de-Defesas/base/base.sqlite3";
+private static String url = "jdbc:sqlite:/home/natanael/IdeaProjects/Sistema-para-Agendamento-e-Gerenciamento-de-Defesas/base/base.sqlite3";
     protected static Connection conexao = null;
 
     public ConnectionBase(){
@@ -15,9 +16,12 @@ public class ConnectionBase {
 
     private static boolean conecta() {
         try {
+
             conexao =  DriverManager.getConnection(url);
             return true;
-        } catch (SQLException e) { return false; }
+        } catch (SQLException e) {
+            System.out.println(e);
+            return false; }
     }
 
     public static boolean desconecta() {
