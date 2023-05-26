@@ -1,11 +1,13 @@
 package model;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.*;
+
 
 public final class Teacher extends Person {
     private int teacherId;
 
-    public Teacher(String name, String socialName, Date birthday, String cpf, String rg, String email, int phoneNumber, int teacherId) {
+    public Teacher(String name, String socialName, Date birthday, String cpf, String rg, String email, String phoneNumber, int teacherId) {
         super(name, socialName, birthday, cpf, rg, email, phoneNumber);
         setTeacherId(teacherId);
     }

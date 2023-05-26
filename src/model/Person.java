@@ -1,22 +1,23 @@
 package model;
 
-import java.util.Date;
-import java.util.Objects;
+import java.time.LocalDate;
+import java.util.*;
 
-public abstract class Person {
+public class Person {
 
     protected int personId;
     protected String name;
     protected String socialName;
-    protected Date birthday;
+    protected java.util.Date birthday;
 
     protected String cpf;
     protected String rg;
 
     protected String email;
-    protected int phoneNumber;
+    protected String phoneNumber;
 
-    public Person(String name, String socialName, Date birthday, String cpf, String rg, String email, int phoneNumber) {
+    public Person(int personId, String name, String socialName, java.util.Date birthday, String cpf, String rg, String email, String phoneNumber) {
+        this.setPersonId(personId);
         this.name = name;
         this.socialName = socialName;
         this.birthday = birthday;
@@ -26,8 +27,20 @@ public abstract class Person {
         this.phoneNumber = phoneNumber;
     }
 
-    public Person(String name, Date birthday, String cpf, String rg, String email) {
-        this(name, null, birthday, cpf, rg, email, 0);
+    public Person(String name, String socialName, java.util.Date birthday, String cpf, String rg, String email, String phoneNumber) {
+        this(-1,name,socialName,birthday, cpf, rg, email, phoneNumber);
+    }
+
+    public Person(String name, java.util.Date birthday, String cpf, String rg, String email) {
+        this(name, null, birthday, cpf, rg, email, null);
+    }
+
+    public Person(int personId){
+        this(personId, null, null, null,null, null,null,null);
+    }
+
+    public Person(){
+        this(-1);
     }
 
 
@@ -48,7 +61,7 @@ public abstract class Person {
     }
 
     public Date getBirthday() {
-        return birthday;
+        return (Date) birthday;
     }
 
     public void setBirthday(Date birthday) {
@@ -79,11 +92,11 @@ public abstract class Person {
         this.email = email;
     }
 
-    public int getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(int phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -107,5 +120,14 @@ public abstract class Person {
                 ", email='" + email + '\'' +
                 ", phoneNumber=" + phoneNumber +
                 '}';
+    }
+
+
+    public int getPersonId() {
+        return personId;
+    }
+
+    public void setPersonId(int personId) {
+        this.personId = personId;
     }
 }

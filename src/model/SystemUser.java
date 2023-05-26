@@ -1,10 +1,11 @@
 package model;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.*;
 
-public class SystemUser extends Person{
+public final class SystemUser extends Person{
 
-    public SystemUser(String name, String socialName, Date birthday, String cpf, String rg, String email, int phoneNumber) {
+    public SystemUser(String name, String socialName, Date birthday, String cpf, String rg, String email, String phoneNumber) {
         super(name, socialName, birthday, cpf, rg, email, phoneNumber);
     }
 

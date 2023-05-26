@@ -7,17 +7,20 @@ import java.sql.SQLException;
 public class ConnectionBase {
 
     private static String url = "jdbc:sqlite:/home/natanael/Sistema-para-Agendamento-e-Gerenciamento-de-Defesas/base/base.sqlite3";
-    protected static Connection conexao = null;
+    protected static Connection conexao;
 
     public ConnectionBase(){
         if(conexao==null) conecta();
     }
 
-    private static boolean conecta() {
+    private boolean conecta() {
         try {
-            conexao =  DriverManager.getConnection(url);
+            this.conexao =  DriverManager.getConnection(url);
             return true;
-        } catch (SQLException e) { return false; }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static boolean desconecta() {
@@ -25,6 +28,10 @@ public class ConnectionBase {
             conexao.close();
             return true;
         } catch (SQLException e) { return false; }
+    }
+
+    public boolean statusConnection(){
+        return conexao != null;
     }
 
 }
