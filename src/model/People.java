@@ -6,7 +6,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 
 public class People extends ConnectionBase {
+public class People extends ConnectionBase {
 
+    public People(){
     public People(){
         super();
     }
@@ -29,9 +31,10 @@ public class People extends ConnectionBase {
 
         }catch (SQLException e) {
             System.out.println(e);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
         }
+//        catch (ParseException e) {
+//            throw new RuntimeException(e);
+//        }
 
         return person1;
     }

@@ -6,17 +6,17 @@ public final class Session{
 
     private String tolking;
     private Date experiedIn;
-    private SystemUser systemUser;
+    private int systemUserId;
 
 
-    public Session(String tolking, Date experiedIn, SystemUser systemUser) {
+    public Session(String tolking, Date experiedIn, int systemUserId) {
         this.setTolking(tolking);
         this.setExperiedIn(experiedIn);
-        this.setSystemUser(systemUser);
+        this.setSystemUserId(systemUserId);
     }
 
     public Session(String tolking, Date experiedIn){
-        this(tolking, experiedIn, null);
+        this(tolking, experiedIn, -1);
     }
 
     public String getTolking() {
@@ -35,11 +35,15 @@ public final class Session{
         this.experiedIn = experiedIn;
     }
 
-    public SystemUser getSystemUser() {
-        return systemUser;
+    public int getSystemUserId() {
+        return this.systemUserId;
     }
 
-    public void setSystemUser(SystemUser systemUser) {
-        this.systemUser = systemUser;
+    public void setSystemUserId(int systemUserId) {
+        this.systemUserId = systemUserId;
+    }
+
+    public String toString(){
+        return "Sesion{tolking: " + getTolking() + " ,experiedIn: " + getExperiedIn() + ",systemUserId: " + getSystemUserId() + "}";
     }
 }
