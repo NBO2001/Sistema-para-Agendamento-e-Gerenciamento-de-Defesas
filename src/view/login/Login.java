@@ -1,8 +1,18 @@
 package view.login;
 
-import javax.swing.*;
+import controller.Authentication;
+import controller.ControllingManager;
+import interfaces.Visibled;
+import view.home.Home;
 
-public class Login {
+import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Arrays;
+
+public class Login implements Visibled {
+
+    private ControllingManager controllingManager;
     private JFrame jFrame;
     private JPanel panel1;
     private JPanel iconApp;
@@ -14,8 +24,34 @@ public class Login {
     private JPasswordField passwordField1;
     private JButton btnLogin;
 
-    public Login(){
+    public Login(ControllingManager controllingManager){
+
+        this.controllingManager = controllingManager;
+
         initialize();
+        btnLogin.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+
+                String userName = textFieldUsername.getText();
+
+                // Modificar depois, se der tempo, adicionar seguranca nisso.
+                String password = new String(passwordField1.getPassword());
+
+
+                if(Authentication.authenticate(userName, password,Login.this, new Home(), controllingManager )){
+                    setVisible(false);
+                }else{
+                    JOptionPane.showMessageDialog(null, "Invalid username or password. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
+            }
+        });
+
+    }
+    public Login(){
+        this(null);
     }
 
     private void initialize(){

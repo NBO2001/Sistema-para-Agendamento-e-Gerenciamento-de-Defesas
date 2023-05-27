@@ -6,19 +6,17 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 
 public class People extends ConnectionBase {
-public class People extends ConnectionBase {
 
-    public People(){
     public People(){
         super();
     }
 
-    public Person selectPerson(Person person){
+    public Person selectPerson(int id){
         Person person1 = null;
         try {
             Statement st = conexao.createStatement();
 
-            ResultSet rs = st.executeQuery("SELECT * FROM people WHERE personId LIKE " + person.getPersonId());
+            ResultSet rs = st.executeQuery("SELECT * FROM people WHERE personId LIKE " + id);
             if (rs.next()) {
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -29,7 +27,7 @@ public class People extends ConnectionBase {
 
             }
 
-        }catch (SQLException e) {
+        }catch (SQLException | ParseException e) {
             System.out.println(e);
         }
 //        catch (ParseException e) {
@@ -39,7 +37,49 @@ public class People extends ConnectionBase {
         return person1;
     }
 
-    public boolean insertPerson(Person person){
+    public static Person selectPerson(String cpf){
+
+        Person person = null;
+
+        String sql = "SELECT * FROM people WHERE cpf LIKE ?";
+
+        try{
+            PreparedStatement stmt = conexao.prepareStatement(sql);
+
+            stmt.setString(1, cpf);
+
+
+            ResultSet resultSet = stmt.executeQuery();
+
+            if(resultSet.next()){
+
+
+
+
+                person = new Person(
+                        resultSet.getInt("personId"), resultSet.getString("name"),
+                        resultSet.getString("social_name"), (new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("birthday")),
+                        resultSet.getString("cpf"), resultSet.getString("rg"), resultSet.getString("email"),
+                        resultSet.getString("phone_number")
+                );
+
+            }
+
+            resultSet.close();
+            stmt.close();
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        return person;
+
+    }
+
+    public static boolean insertPerson(Person person){
         String sql = "INSERT INTO people (name, cpf, social_name, birthday, rg, email, phone_number) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
@@ -66,4 +106,5 @@ public class People extends ConnectionBase {
 
         return true;
     }
+
 }

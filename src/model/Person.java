@@ -1,5 +1,8 @@
 package model;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -66,6 +69,20 @@ public class Person {
 
     public void setBirthday(Date birthday) {
         this.birthday = birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        birthday = birthday.replaceAll("\\s", "");
+        DateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy");
+//        DateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date date = inputFormat.parse(birthday);
+            this.birthday = date;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     public String getCpf() {

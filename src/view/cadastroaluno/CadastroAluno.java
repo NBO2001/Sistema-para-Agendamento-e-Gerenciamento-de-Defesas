@@ -1,10 +1,12 @@
 package view.cadastroaluno;
 
+import interfaces.Visibled;
+
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class CadastroAluno {
+public class CadastroAluno implements Visibled{
 
     private JFrame jFrame;
     private JPanel panel1;
@@ -22,6 +24,19 @@ public class CadastroAluno {
     private JTextField textFieldMatricula;
     private JPanel panelOption;
     private JComboBox boxTypeStudent;
+
+    public CadastroAluno(Visibled afterView) {
+        initialize();
+        btnMenu.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                jPanelMenu.setVisible(!jPanelMenu.isVisible());
+
+            }
+        });
+    }
+
     public CadastroAluno(){
         initialize();
         btnMenu.addMouseListener(new MouseAdapter() {

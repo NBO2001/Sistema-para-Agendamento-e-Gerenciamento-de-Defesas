@@ -46,4 +46,17 @@ public final class Session{
     public String toString(){
         return "Sesion{tolking: " + getTolking() + " ,experiedIn: " + getExperiedIn() + ",systemUserId: " + getSystemUserId() + "}";
     }
+
+    public static boolean isSessionActive(Session session){
+        if(session != null){
+
+            Date nowDay = new Date();
+
+            System.out.println(nowDay);
+
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
