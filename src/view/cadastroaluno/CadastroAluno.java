@@ -1,6 +1,5 @@
 package view.cadastroaluno;
 
-import interfaces.Personificated;
 import interfaces.VisiblePersonified;
 import interfaces.Visibled;
 import model.Person;
@@ -17,7 +16,7 @@ public class CadastroAluno implements VisiblePersonified {
     private JPanel panel1;
     private JButton btnMenu;
     private JPanel jPanelMenu;
-    private JButton btnCadStu;
+    private JButton btnHome;
     private JButton btnCadTeac;
     private JButton btnCadUser;
     private JButton btnCadDefense;
@@ -76,10 +75,22 @@ public class CadastroAluno implements VisiblePersonified {
                 }
             }
         });
+
+        btnHome.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if( afterView != null ){
+                    afterView.setVisible(true);
+                    CadastroAluno.this.setVisible(false);
+                }
+            }
+        });
     }
 
     public CadastroAluno(){
         this(null);
+
     }
 
     private void initialize(){

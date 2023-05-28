@@ -136,7 +136,7 @@
                             </properties>
                             <border type="none"/>
                             <children>
-                              <component id="27c97" class="javax.swing.JButton" binding="btnCadStu">
+                              <component id="27c97" class="javax.swing.JButton" binding="btnCadHome">
                                 <constraints>
                                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false">
                                     <minimum-size width="-1" height="100"/>
@@ -145,8 +145,8 @@
                                 <properties>
                                   <background color="-6631425"/>
                                   <borderPainted value="false"/>
-                                  <label value="Cadastrar Aluno"/>
-                                  <text value="Cadastrar Aluno"/>
+                                  <label value="Home"/>
+                                  <text value="Home"/>
                                 </properties>
                               </component>
                             </children>
@@ -161,7 +161,7 @@
                             </properties>
                             <border type="none"/>
                             <children>
-                              <component id="60887" class="javax.swing.JButton" binding="btnCadTeac">
+                              <component id="60887" class="javax.swing.JButton" binding="btnCadStu">
                                 <constraints>
                                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false">
                                     <minimum-size width="-1" height="100"/>
@@ -170,8 +170,8 @@
                                 <properties>
                                   <background color="-6631425"/>
                                   <borderPainted value="false"/>
-                                  <label value="Cadastrar Professor"/>
-                                  <text value="Cadastrar Professor"/>
+                                  <label value="Cadastrar Aluno"/>
+                                  <text value="Cadastrar Aluno"/>
                                 </properties>
                               </component>
                             </children>
@@ -186,7 +186,7 @@
                             </properties>
                             <border type="none"/>
                             <children>
-                              <component id="cbcd0" class="javax.swing.JButton" binding="btnCadUser">
+                              <component id="cbcd0" class="javax.swing.JButton" binding="btnCadTeac">
                                 <constraints>
                                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false">
                                     <minimum-size width="-1" height="100"/>
@@ -195,8 +195,8 @@
                                 <properties>
                                   <background color="-6631425"/>
                                   <borderPainted value="false"/>
-                                  <label value="Cadastrar Usuário"/>
-                                  <text value="Cadastrar Usuário"/>
+                                  <label value="Cadastrar Professor"/>
+                                  <text value="Cadastrar Professor"/>
                                 </properties>
                               </component>
                             </children>

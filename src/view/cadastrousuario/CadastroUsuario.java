@@ -3,7 +3,6 @@ package view.cadastrousuario;
 import interfaces.VisiblePersonified;
 import interfaces.Visibled;
 import model.*;
-import view.cadastroprofessor.CadastroProfessor;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -15,9 +14,9 @@ public class CadastroUsuario implements VisiblePersonified  {
     private JPanel panel1;
     private JButton btnMenu;
     private JPanel jPanelMenu;
+    private JButton btnCadHome;
     private JButton btnCadStu;
     private JButton btnCadTeac;
-    private JButton btnCadUser;
     private JButton btnCadDefense;
     private JButton btnAlterCad;
     private JButton btnRelatorio;
@@ -72,6 +71,16 @@ public class CadastroUsuario implements VisiblePersonified  {
                 }
             }
         });
+        btnCadHome.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if( afterView != null ){
+                    afterView.setVisible(true);
+                    CadastroUsuario.this.setVisible(false);
+                }
+            }
+        });
     }
 
     private void initialize(){
@@ -88,6 +97,7 @@ public class CadastroUsuario implements VisiblePersonified  {
     }
 
     public void setVisible(boolean value){
+        jPanelMenu.setVisible(false);
         this.jFrame.setVisible(value);
     }
 

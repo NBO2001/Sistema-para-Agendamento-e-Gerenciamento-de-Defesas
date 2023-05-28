@@ -1,11 +1,14 @@
 package view.cadastrodefesa;
 
+import interfaces.Visibled;
+import model.Defense;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class CadastroDefesaVariant04 {
+public class CadastroDefesaVariant04 implements Visibled {
 
     private  JFrame jFrame;
     private JPanel panel1;
@@ -28,13 +31,17 @@ public class CadastroDefesaVariant04 {
     private JTextField textFieldNomeProfessor;
     private JButton btnVerify;
     private JTable tableInfors;
-    private JTextField fieldTypeDefesa;
+    private JTextField textTypeDefesa;
     private JPanel panelFundoTable;
 
     private DefaultTableModel model;
-    public CadastroDefesaVariant04(){
+
+    private Defense defense;
+    public CadastroDefesaVariant04(Visibled afterView, Defense defense){
 
         initialize();
+        this.setDefense(defense);
+        this.setInfo();
         btnMenu.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -58,7 +65,7 @@ public class CadastroDefesaVariant04 {
 
         this.textFieldStudent.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         this.textFieldTeach.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        this.fieldTypeDefesa.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        this.textTypeDefesa.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
 
 
@@ -82,5 +89,27 @@ public class CadastroDefesaVariant04 {
         this.tableInfors = new JTable(this.model);
 
 
+    }
+
+    public Defense getDefense() {
+        return defense;
+    }
+
+    public void setDefense(Defense defense) {
+        this.defense = defense;
+    }
+
+    private void setInfo() {
+
+        if(defense != null){
+            this.textFieldTeach.setText(defense.getTeacherAdvisor().getName());
+            this.textFieldStudent.setText(defense.getStudentDefending().getName());
+            this.textFieldTitle.setText(defense.getDefenseTitle());
+            this.textTypeDefesa.setText(Defense.parseTypeDefenseFormatString(defense.getTypeDefense()));
+
+
+            this.textFieldTeach.setEditable(false);
+            this.textFieldStudent.setEditable(false);
+        }
     }
 }

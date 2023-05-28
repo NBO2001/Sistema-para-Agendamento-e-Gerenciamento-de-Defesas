@@ -18,6 +18,9 @@ public final class Teacher extends Person {
         setTeacherId(-1);
     }
 
+    public Teacher(){
+        super();
+    }
     public Teacher(String name, Date birthday, String cpf, String rg, String email, int teacherId) {
         super(name, birthday, cpf, rg, email);
         setTeacherId(teacherId);

@@ -3,6 +3,7 @@ package view.home;
 import interfaces.Visibled;
 import view.cadastro.Cadastro;
 import view.cadastroaluno.CadastroAluno;
+import view.cadastrodefesa.CadastroDefesaVariant01;
 import view.cadastroprofessor.CadastroProfessor;
 import view.cadastrousuario.CadastroUsuario;
 
@@ -63,6 +64,14 @@ public class Home implements Visibled {
                 Home.this.setVisible(false);
             }
         });
+        btnCadDefense.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                new CadastroDefesaVariant01(Home.this ).setVisible(true);
+                Home.this.setVisible(false);
+            }
+        });
     }
 
     private void initialize(){
@@ -77,6 +86,7 @@ public class Home implements Visibled {
     }
 
     public void setVisible(boolean value){
+        jPanelMenu.setVisible(false);
         this.jFrame.setVisible(value);
     }
 }

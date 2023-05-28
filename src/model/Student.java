@@ -29,6 +29,9 @@ public final class Student extends Person {
         setStudentId(studentId);
         setTypeStudent(typeStudent);
     }
+    public Student(){
+        super();
+    }
 
     @Override
     public String toString() {
