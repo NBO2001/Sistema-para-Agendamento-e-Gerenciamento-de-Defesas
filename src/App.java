@@ -1,4 +1,7 @@
 import controller.ControllingManager;
+import view.modalfindteacher.ModalFindTeacher;
+
+import javax.swing.*;
 
 public class App {
 

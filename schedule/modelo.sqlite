@@ -47,16 +47,18 @@ CREATE TABLE IF NOT EXISTS register_login (
 );
 
 CREATE TABLE IF NOT EXISTS defense (
-  defense_id INTEGER PRIMARY KEY AUTOINCREMENT,
-  type_defense INTEGER NOT NULL,
-  defense_title TEXT,
-  date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  local TEXT NOT NULL,
-  teacher_advisor INTEGER NOT NULL,
-  student_defending INTEGER NOT NULL,
-  final_pontuation REAL,
-  status INTEGER,
-  observation TEXT
+    defense_id        INTEGER   PRIMARY KEY AUTOINCREMENT,
+    type_defense      INTEGER   NOT NULL,
+    defense_title     TEXT,
+    date              TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    local             TEXT      NOT NULL,
+    teacher_advisor   INTEGER   NOT NULL
+                                REFERENCES teachers (teacher_id),
+    student_defending INTEGER   NOT NULL
+                                REFERENCES students (student_id),
+    final_pontuation  REAL,
+    status            INTEGER,
+    observation       TEXT
 );
 
 CREATE TABLE IF NOT EXISTS boardOfTeachers (

@@ -2,11 +2,17 @@ package view.cadastrodefesa;
 
 import interfaces.Visibled;
 import model.Defense;
+import model.DefenseManager;
+import model.StudentManager;
+import model.Teacher;
+import view.cadastroaluno.CadastroAluno;
+import view.modalfindteacher.ModalFindTeacher;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class CadastroDefesaVariant04 implements Visibled {
 
@@ -40,7 +46,9 @@ public class CadastroDefesaVariant04 implements Visibled {
     public CadastroDefesaVariant04(Visibled afterView, Defense defense){
 
         initialize();
+        defense.setBoardOfTeachers(new ArrayList<Teacher>());
         this.setDefense(defense);
+
         this.setInfo();
         btnMenu.addMouseListener(new MouseAdapter() {
             @Override
@@ -51,6 +59,39 @@ public class CadastroDefesaVariant04 implements Visibled {
             }
         });
 
+
+
+        btnVerify.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                ModalFindTeacher modalFindTeacher = new ModalFindTeacher(textFieldNomeProfessor.getText(), CadastroDefesaVariant04.this);
+                modalFindTeacher.setVisible(true);
+
+
+            }
+        });
+        btnNext.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if(DefenseManager.insert(defense)){
+                    JOptionPane.showMessageDialog(null, "Insert success!");
+
+                    if( afterView != null ){
+                        afterView.setVisible(true);
+                        CadastroDefesaVariant04.this.setVisible(false);
+                    }
+
+                }else{
+                    if( afterView != null ){
+                        afterView.setVisible(true);
+                        CadastroDefesaVariant04.this.setVisible(false);
+                    }
+                    JOptionPane.showMessageDialog(null, "Error inserting.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
     }
 
     private void initialize(){
@@ -69,9 +110,6 @@ public class CadastroDefesaVariant04 implements Visibled {
 
 
 
-        DefaultTableModel model = (DefaultTableModel) this.tableInfors.getModel();
-        model.addRow(new Object[]{"Nome", "Matrícula", "Ação"});
-
         this.jFrame.add(panel1);
     }
 
@@ -81,12 +119,9 @@ public class CadastroDefesaVariant04 implements Visibled {
 
     private void createUIComponents() {
 
-        this.model = new DefaultTableModel();
-        model.addColumn("Nome");
-        model.addColumn("Matrícula");
-        model.addColumn("Ação");
+        DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{}, new Object[]{"Nome", "Matrícula", "Ação"});
 
-        this.tableInfors = new JTable(this.model);
+        this.tableInfors = new JTable(tableModel);
 
 
     }
@@ -111,5 +146,14 @@ public class CadastroDefesaVariant04 implements Visibled {
             this.textFieldTeach.setEditable(false);
             this.textFieldStudent.setEditable(false);
         }
+    }
+
+    public void addBoardOfTeachers(Teacher teacher){
+        if(teacher != null){
+            DefaultTableModel model = (DefaultTableModel) this.tableInfors.getModel();
+            model.addRow(new Object[]{teacher.getName(), teacher.getRegister(), "Ação"});
+            this.defense.getBoardOfTeachers().add(teacher);
+        }
+
     }
 }
