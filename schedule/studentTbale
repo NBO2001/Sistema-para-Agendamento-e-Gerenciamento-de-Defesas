@@ -1,0 +1,31 @@
+CREATE TABLE students (
+    student_id          INTEGER   PRIMARY KEY AUTOINCREMENT,
+    typeStudent         INTEGER,
+    student_internal_id TEXT      UNIQUE,
+    personId            INTEGER,
+    created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (
+        personId
+    )
+    REFERENCES people (personId) 
+);
+
+PRAGMA foreign_keys = 1;
+
+INSERT INTO students (
+                         student_id,
+                         typeStudent,
+                         student_internal_id,
+                         personId,
+                         created_at
+                     )
+                     SELECT student_id,
+                            typeStudent,
+                            student_internal_id,
+                            personId,
+                            created_at
+                       FROM sqlitestudio_temp_table;
+
+DROP TABLE sqlitestudio_temp_table;
+
+PRAGMA foreign_keys = 1;
