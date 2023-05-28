@@ -4,6 +4,7 @@ import interfaces.Visibled;
 import view.cadastro.Cadastro;
 import view.cadastroaluno.CadastroAluno;
 import view.cadastroprofessor.CadastroProfessor;
+import view.cadastrousuario.CadastroUsuario;
 
 import javax.swing.*;
 import java.awt.event.ComponentAdapter;
@@ -53,6 +54,15 @@ public class Home implements Visibled {
                 Home.this.setVisible(false);
             }
         });
+
+        btnCadUser.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                new Cadastro(Home.this, new CadastroUsuario(Home.this)).setVisible(true);
+                Home.this.setVisible(false);
+            }
+        });
     }
 
     private void initialize(){
@@ -61,7 +71,7 @@ public class Home implements Visibled {
 
         this.jFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        jPanelMenu.setVisible(false);
 
         this.jFrame.add(panel1);
     }

@@ -3,6 +3,7 @@ package view.login;
 import controller.Authentication;
 import controller.ControllingManager;
 import interfaces.Visibled;
+import utils.Utils;
 import view.home.Home;
 
 import javax.swing.*;
@@ -34,10 +35,10 @@ public class Login implements Visibled {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
 
-                String userName = textFieldUsername.getText();
+                String userName = Utils.encryptTolkienName(textFieldUsername.getText());
 
                 // Modificar depois, se der tempo, adicionar seguranca nisso.
-                String password = new String(passwordField1.getPassword());
+                String password = Utils.encryptTolkienName(new String(passwordField1.getPassword()));
 
 
                 if(Authentication.authenticate(userName, password,Login.this, new Home(), controllingManager )){

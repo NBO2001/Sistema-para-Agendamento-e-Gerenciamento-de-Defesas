@@ -1,10 +1,15 @@
 package view.cadastrousuario;
 
+import interfaces.VisiblePersonified;
+import interfaces.Visibled;
+import model.*;
+import view.cadastroprofessor.CadastroProfessor;
+
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class CadastroUsuario {
+public class CadastroUsuario implements VisiblePersonified  {
 
     private JFrame jFrame;
     private JPanel panel1;
@@ -23,7 +28,9 @@ public class CadastroUsuario {
     private JTextField textFieldPasswd;
     private JPanel panelOption;
 
-    public CadastroUsuario(){
+    private SystemUser systemUser;
+
+    public CadastroUsuario(Visibled afterView){
         initialize();
         btnMenu.addMouseListener(new MouseAdapter() {
             @Override
@@ -31,6 +38,38 @@ public class CadastroUsuario {
                 super.mouseClicked(e);
                 jPanelMenu.setVisible(!jPanelMenu.isVisible());
 
+            }
+        });
+
+
+        btnNext.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+
+                if(CadastroUsuario.this.getSystemUser() != null){
+                    SystemUser systemUser1 = CadastroUsuario.this.getSystemUser();
+
+                    systemUser1.setLogin(textFieldLogin.getText());
+                    systemUser1.setPassword(textFieldPasswd.getText());
+
+                    if(SystemUserManager.insert(systemUser1)){
+                        JOptionPane.showMessageDialog(null, "Insert success!");
+
+                        if( afterView != null ){
+                            afterView.setVisible(true);
+                            CadastroUsuario.this.setVisible(false);
+                        }
+
+                    }else{
+                        if( afterView != null ){
+                            afterView.setVisible(true);
+                            CadastroUsuario.this.setVisible(false);
+                        }
+                        JOptionPane.showMessageDialog(null, "Error inserting.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                }
             }
         });
     }
@@ -52,4 +91,16 @@ public class CadastroUsuario {
         this.jFrame.setVisible(value);
     }
 
+    @Override
+    public void setState(Person person) {
+        setSystemUser(SystemUser.parseSystemUser(person));
+    }
+
+    public SystemUser getSystemUser() {
+        return systemUser;
+    }
+
+    public void setSystemUser(SystemUser systemUser) {
+        this.systemUser = systemUser;
+    }
 }

@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS students (
 
 CREATE TABLE IF NOT EXISTS system_users (
   system_user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-  login TEXT,
+  login TEXT UNIQUE,
   passwd TEXT,
   account_status INTEGER,
   personId INTEGER,
@@ -75,7 +75,7 @@ VALUES ('Admin', '12345678901', 'Admin', '1990-01-01', 'ABC123', 'admin@example.
 
 
 INSERT INTO system_users (login, passwd, account_status, personId)
-VALUES ('admin', 'admin', 1, 1);
+VALUES ('d033e22ae348aeb5660fc2140aec35850c4da997', 'd033e22ae348aeb5660fc2140aec35850c4da997', 1, 1);
 
 
 
