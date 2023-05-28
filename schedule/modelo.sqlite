@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS people (
 
 CREATE TABLE IF NOT EXISTS teachers (
   teacher_id INTEGER PRIMARY KEY,
-  teacher_internal_id INTEGER,
+  teacher_internal_id TEXT UNIQUE,
   personId INTEGER,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (personId) REFERENCES people (personId)

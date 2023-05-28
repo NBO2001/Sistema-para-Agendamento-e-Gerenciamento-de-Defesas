@@ -30,7 +30,7 @@ public class StudentManager extends ConnectionBase{
             return true;
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            return false;
         }
 
 

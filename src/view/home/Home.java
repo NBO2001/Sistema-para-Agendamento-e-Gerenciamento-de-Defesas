@@ -3,6 +3,7 @@ package view.home;
 import interfaces.Visibled;
 import view.cadastro.Cadastro;
 import view.cadastroaluno.CadastroAluno;
+import view.cadastroprofessor.CadastroProfessor;
 
 import javax.swing.*;
 import java.awt.event.ComponentAdapter;
@@ -40,6 +41,15 @@ public class Home implements Visibled {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 new Cadastro(Home.this, new CadastroAluno(Home.this)).setVisible(true);
+                Home.this.setVisible(false);
+            }
+        });
+
+        btnCadTeac.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                new Cadastro(Home.this, new CadastroProfessor(Home.this)).setVisible(true);
                 Home.this.setVisible(false);
             }
         });

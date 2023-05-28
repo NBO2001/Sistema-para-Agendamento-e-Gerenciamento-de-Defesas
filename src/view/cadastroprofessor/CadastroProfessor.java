@@ -1,10 +1,15 @@
 package view.cadastroprofessor;
 
+import interfaces.VisiblePersonified;
+import interfaces.Visibled;
+import model.*;
+import view.cadastroaluno.CadastroAluno;
+
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class CadastroProfessor {
+public class CadastroProfessor implements VisiblePersonified {
 
     private JFrame jFrame;
     private JPanel panel1;
@@ -28,7 +33,9 @@ public class CadastroProfessor {
     private JTextField fieldRG;
     private JTextField fieldPhone;
 
-    public CadastroProfessor(){
+    private Teacher teacher;
+
+    public CadastroProfessor(Visibled afterView){
         initialize();
         btnMenu.addMouseListener(new MouseAdapter() {
             @Override
@@ -39,6 +46,37 @@ public class CadastroProfessor {
             }
         });
 
+        btnNext.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+
+                if(CadastroProfessor.this.getTeacher() != null){
+                    Teacher teacher1 = CadastroProfessor.this.getTeacher();
+
+                    teacher1.setRegister(textFieldMatricula.getText());
+
+
+                    if(TeacherManager.insert(teacher1)){
+                        JOptionPane.showMessageDialog(null, "Insert success!");
+
+                        if( afterView != null ){
+                            afterView.setVisible(true);
+                            CadastroProfessor.this.setVisible(false);
+                        }
+
+                    }else{
+                        if( afterView != null ){
+                            afterView.setVisible(true);
+                            CadastroProfessor.this.setVisible(false);
+                        }
+                        JOptionPane.showMessageDialog(null, "Error inserting.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                }
+
+            }
+        });
     }
 
     private void initialize(){
@@ -59,5 +97,16 @@ public class CadastroProfessor {
     }
 
 
+    @Override
+    public void setState(Person person) {
+        this.setTeacher(Teacher.parseTeacher(person));
+    }
 
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
+    }
 }
