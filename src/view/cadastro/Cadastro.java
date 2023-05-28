@@ -1,5 +1,6 @@
 package view.cadastro;
 
+import interfaces.VisiblePersonified;
 import interfaces.Visibled;
 import model.People;
 import model.Person;
@@ -7,7 +8,11 @@ import model.Person;
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.ZoneId;
+import java.util.Date;
 
 public class Cadastro implements Visibled {
 
@@ -36,7 +41,9 @@ public class Cadastro implements Visibled {
     private JTextField fieldPhone;
 
     private Boolean noInBase;
-    public Cadastro(Visibled afterView, Visibled nextView){
+
+    private Person person;
+    public Cadastro(Visibled afterView, VisiblePersonified nextView){
         initialize();
         btnMenu.addMouseListener(new MouseAdapter() {
             @Override
@@ -52,13 +59,13 @@ public class Cadastro implements Visibled {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
 
-                Person person = People.selectPerson(textFieldCPF2.getText());
+                Person person = People.select(textFieldCPF2.getText());
+
+                Cadastro.this.setPerson(person);
 
                 if(person == null){
-                    noInBase = true;
                     jPanelForm.setVisible(true);
                 }else{
-                    noInBase = false;
                     textFieldName.setText(person.getName());
                     textFieldSocialName.setText(person.getSocialName());
                     textFieldCPF2.setText(person.getCpf());
@@ -88,24 +95,30 @@ public class Cadastro implements Visibled {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
 
-                if(noInBase){
-                    Person person = new Person();
+
+
+
+                Person person = Cadastro.this.getPerson();
+                if(person == null){
+                    person = new Person();
                     person.setName(textFieldName.getText());
                     person.setSocialName(textFieldSocialName.getText());
                     person.setCpf(textFieldCPF2.getText());
-                    person.setBirthday(textFieldBirdday.getText());
+
                     person.setEmail(textFieldEmail.getText());
                     person.setRg(fieldRG.getText());
                     person.setPhoneNumber(fieldPhone.getText());
 
-                    if(People.insertPerson(person)){
-                        nextView.setVisible(true);
-                        Cadastro.this.setVisible(false);
-                    }else{
-                        JOptionPane.showMessageDialog(null, "Erro inesperado", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
+                    person.setBirthday(textFieldBirdday.getText());
+
+                    Cadastro.this.setPerson(person);
+
+                    nextView.setState(person);
+                    nextView.setVisible(true);
+                    Cadastro.this.setVisible(false);
 
                 }else{
+                    nextView.setState(person);
                     nextView.setVisible(true);
                     Cadastro.this.setVisible(false);
                 }
@@ -135,5 +148,13 @@ public class Cadastro implements Visibled {
 
     public void setVisible(boolean value){
         this.jFrame.setVisible(value);
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
     }
 }

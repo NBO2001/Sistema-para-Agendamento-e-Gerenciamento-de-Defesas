@@ -11,7 +11,7 @@ public class People extends ConnectionBase {
         super();
     }
 
-    public Person selectPerson(int id){
+    public Person select(int id){
         Person person1 = null;
         try {
             Statement st = conexao.createStatement();
@@ -37,7 +37,7 @@ public class People extends ConnectionBase {
         return person1;
     }
 
-    public static Person selectPerson(String cpf){
+    public static Person select(String cpf){
 
         Person person = null;
 
@@ -79,7 +79,44 @@ public class People extends ConnectionBase {
 
     }
 
-    public static boolean insertPerson(Person person){
+    public static Person select(Person person1){
+
+        Person person = null;
+
+        String sql = "SELECT * FROM people WHERE personId LIKE ?";
+
+        try{
+            PreparedStatement stmt = conexao.prepareStatement(sql);
+
+            stmt.setInt(1, person1.getPersonId());
+
+            ResultSet resultSet = stmt.executeQuery();
+
+            if(resultSet.next()){
+
+                person = new Person(
+                        resultSet.getInt("personId"), resultSet.getString("name"),
+                        resultSet.getString("social_name"), (new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("birthday")),
+                        resultSet.getString("cpf"), resultSet.getString("rg"), resultSet.getString("email"),
+                        resultSet.getString("phone_number")
+                );
+
+            }
+
+            resultSet.close();
+            stmt.close();
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        return person;
+
+    }
+    public static boolean insert(Person person){
         String sql = "INSERT INTO people (name, cpf, social_name, birthday, rg, email, phone_number) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 

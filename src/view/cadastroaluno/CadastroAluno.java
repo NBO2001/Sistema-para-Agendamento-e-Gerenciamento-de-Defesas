@@ -1,12 +1,17 @@
 package view.cadastroaluno;
 
+import interfaces.Personificated;
+import interfaces.VisiblePersonified;
 import interfaces.Visibled;
+import model.Person;
+import model.Student;
+import model.StudentManager;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class CadastroAluno implements Visibled{
+public class CadastroAluno implements VisiblePersonified {
 
     private JFrame jFrame;
     private JPanel panel1;
@@ -25,7 +30,10 @@ public class CadastroAluno implements Visibled{
     private JPanel panelOption;
     private JComboBox boxTypeStudent;
 
+    private Student student;
+
     public CadastroAluno(Visibled afterView) {
+        this.setStudent(null);
         initialize();
         btnMenu.addMouseListener(new MouseAdapter() {
             @Override
@@ -33,20 +41,45 @@ public class CadastroAluno implements Visibled{
                 super.mouseClicked(e);
                 jPanelMenu.setVisible(!jPanelMenu.isVisible());
 
+            }
+        });
+        btnNext.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+
+                AnyObject selectedObject = (AnyObject) boxTypeStudent.getSelectedItem();
+                String selectedValue = selectedObject.getValue();
+
+                if(CadastroAluno.this.getStudent() != null){
+                    Student student1 = CadastroAluno.this.getStudent();
+                    student1.setTypeStudent(Integer.parseInt(selectedValue));
+                    student1.setRegistration(textFieldMatricula.getText());
+
+
+                    if(StudentManager.insert(student1)){
+                        JOptionPane.showMessageDialog(null, "Insert success!");
+
+                        if( afterView != null ){
+                            afterView.setVisible(true);
+                            CadastroAluno.this.setVisible(false);
+                        }
+
+                    }else{
+                        if( afterView != null ){
+                            afterView.setVisible(true);
+                            CadastroAluno.this.setVisible(false);
+                        }
+                        JOptionPane.showMessageDialog(null, "Error inserting.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                }
             }
         });
     }
 
     public CadastroAluno(){
-        initialize();
-        btnMenu.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                jPanelMenu.setVisible(!jPanelMenu.isVisible());
-
-            }
-        });
+        this(null);
     }
 
     private void initialize(){
@@ -69,7 +102,24 @@ public class CadastroAluno implements Visibled{
         this.jFrame.setVisible(value);
     }
 
-   private class AnyObject{
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
+    public void setStudent(Person student) {
+        this.student = Student.toStudent(student) ;
+    }
+
+    @Override
+    public void setState(Person person) {
+        this.setStudent(person);
+    }
+
+    private class AnyObject{
        private String value;
        private String text;
 

@@ -39,7 +39,7 @@ public class Home implements Visibled {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                new Cadastro(Home.this, new CadastroAluno()).setVisible(true);
+                new Cadastro(Home.this, new CadastroAluno(Home.this)).setVisible(true);
                 Home.this.setVisible(false);
             }
         });

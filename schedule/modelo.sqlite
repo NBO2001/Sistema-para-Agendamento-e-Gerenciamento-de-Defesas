@@ -69,62 +69,6 @@ CREATE TABLE IF NOT EXISTS boardOfTeachers (
 
 
 
-ALTER TABLE people ADD COLUMN teacher_id INTEGER;
-ALTER TABLE people ADD COLUMN student_id INTEGER;
-ALTER TABLE people ADD COLUMN system_user_id INTEGER;
-
-CREATE TABLE sqlitestudio_temp_table AS SELECT *
-                                          FROM people;
-
-DROP TABLE people;
-
-CREATE TABLE people (
-    personId       INTEGER   PRIMARY KEY AUTOINCREMENT,
-    name           TEXT      NOT NULL,
-    social_name    TEXT,
-    birthday       DATE,
-    cpf            TEXT      NOT NULL,
-    rg             TEXT,
-    email          TEXT,
-    phone_number   TEXT,
-    created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    teacher_id     INTEGER   REFERENCES teachers (teacher_id),
-    student_id     INTEGER   REFERENCES students (student_id),
-    system_user_id INTEGER   REFERENCES system_users (system_user_id)
-);
-
-INSERT INTO people (
-                       personId,
-                       name,
-                       social_name,
-                       birthday,
-                       cpf,
-                       rg,
-                       email,
-                       phone_number,
-                       created_at,
-                       teacher_id,
-                       student_id,
-                       system_user_id
-                   )
-                   SELECT personId,
-                          name,
-                          social_name,
-                          birthday,
-                          cpf,
-                          rg,
-                          email,
-                          phone_number,
-                          created_at,
-                          teacher_id,
-                          student_id,
-                          system_user_id
-                     FROM sqlitestudio_temp_table;
-
-DROP TABLE sqlitestudio_temp_table;
-
-PRAGMA foreign_keys = 1;
-
 
 INSERT INTO people (name, cpf, social_name, birthday, rg, email, phone_number)
 VALUES ('Admin', '12345678901', 'Admin', '1990-01-01', 'ABC123', 'admin@example.com', '123-456-7890');
@@ -133,8 +77,5 @@ VALUES ('Admin', '12345678901', 'Admin', '1990-01-01', 'ABC123', 'admin@example.
 INSERT INTO system_users (login, passwd, account_status, personId)
 VALUES ('admin', 'admin', 1, 1);
 
-UPDATE people
-SET system_user_id = (SELECT system_user_id FROM system_users WHERE login = 'admin')
-WHERE name = 'Admin';
 
 
