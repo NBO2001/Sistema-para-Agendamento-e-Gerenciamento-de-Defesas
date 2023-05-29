@@ -144,4 +144,35 @@ public class People extends ConnectionBase {
         return true;
     }
 
+    public static boolean update(Person person){
+        String sql = "UPDATE people SET name = ?, cpf = ?, social_name = ?, birthday = ?, rg = ?, email = ?, phone_number = ? WHERE personId = ?";
+
+        // Create a SimpleDateFormat object to format the date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+            PreparedStatement pstmt = conexao.prepareStatement(sql);
+
+            pstmt.setString(1, person.getName());
+            pstmt.setString(2, person.getCpf());
+            pstmt.setString(3, person.getSocialName());
+            pstmt.setString(4, dateFormat.format(person.getBirthday()).toString() );
+            pstmt.setString(5, person.getRg());
+            pstmt.setString(6, person.getEmail());
+            pstmt.setString(7, person.getPhoneNumber());
+            pstmt.setInt(8, person.getPersonId());
+
+
+
+            int rowsAffected = pstmt.executeUpdate();
+
+            if(rowsAffected != 0) return true;
+            else return false;
+
+        }catch (SQLException e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+
 }

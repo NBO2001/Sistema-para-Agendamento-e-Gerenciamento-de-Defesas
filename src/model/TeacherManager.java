@@ -138,4 +138,12 @@ public class TeacherManager extends ConnectionBase{
 
 
     }
+
+    public static boolean delete(Person teacher){
+
+        Teacher teacher1 = (Teacher) teacher;
+
+        System.out.println(teacher1);
+        return true;
+    }
 }

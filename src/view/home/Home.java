@@ -6,6 +6,7 @@ import view.cadastroaluno.CadastroAluno;
 import view.cadastrodefesa.CadastroDefesaVariant01;
 import view.cadastroprofessor.CadastroProfessor;
 import view.cadastrousuario.CadastroUsuario;
+import view.editPerson.EditPersonVariant01;
 
 import javax.swing.*;
 import java.awt.event.ComponentAdapter;
@@ -69,6 +70,14 @@ public class Home implements Visibled {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 new CadastroDefesaVariant01(Home.this ).setVisible(true);
+                Home.this.setVisible(false);
+            }
+        });
+        btnAlterCad.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                new EditPersonVariant01(Home.this).setVisible(true);
                 Home.this.setVisible(false);
             }
         });

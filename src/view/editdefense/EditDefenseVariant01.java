@@ -1,10 +1,11 @@
-package view.editcadastro;
+package view.editdefense;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class EditCadastroVariant02 {
+public class EditDefenseVariant01 {
+
     private JFrame jFrame;
     private JPanel panel1;
     private JButton btnMenu;
@@ -23,14 +24,13 @@ public class EditCadastroVariant02 {
     private JPanel panelOption;
     private JButton btnEditStudent;
     private JButton btnEditProf;
-    private JTextField txtFieldStudent;
-    private JTextField txtTitleJob;
+    private JTextField txtFieldTitleJob;
+    private JTextField txtFieldDate;
     private JComboBox comboBoxDefenseType;
-    private JTextField txtTypeDefense;
+    private JTextField txtFieldLocal;
     private JButton btnChangeBanca;
-    private JTextField txtFieldTeach;
 
-    public EditCadastroVariant02(){
+    public EditDefenseVariant01(){
         initialize();
         btnMenu.addMouseListener(new MouseAdapter() {
             @Override
@@ -50,13 +50,17 @@ public class EditCadastroVariant02 {
         this.jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // setBorder(BorderFactory.createLineBorder(Color.white));
+        this.textFieldAluno.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        this.textFieldProfessor.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        this.txtFieldTitleJob.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        this.txtFieldDate.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        this.txtFieldLocal.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        this.txtFieldStudent.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        this.txtTitleJob.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        this.txtTypeDefense.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
+        this.btnEditProf.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        this.btnEditStudent.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         this.btnChangeBanca.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
+        this.comboBoxDefenseType.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         this.btnConclusion.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         this.jFrame.add(panel1);
     }
