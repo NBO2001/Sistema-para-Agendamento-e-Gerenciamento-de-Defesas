@@ -9,6 +9,8 @@ public final class SystemUser extends Person{
 
     private String login;
     private String password;
+    private int systemUserId;
+    private int status;
     public SystemUser(String name, String socialName, Date birthday, String cpf, String rg, String email, String phoneNumber) {
         super(name, socialName, birthday, cpf, rg, email, phoneNumber);
     }
@@ -18,6 +20,10 @@ public final class SystemUser extends Person{
 
     public SystemUser(String name, Date birthday, String cpf, String rg, String email) {
         super(name, birthday, cpf, rg, email);
+    }
+
+    public SystemUser() {
+        super();
     }
 
     public String getLogin() {
@@ -46,5 +52,21 @@ public final class SystemUser extends Person{
                 person.getBirthday(), person.getCpf(), person.getRg(),
                 person.getEmail(), person.getPhoneNumber()
         );
+    }
+
+    public int getSystemUserId() {
+        return systemUserId;
+    }
+
+    public void setSystemUserId(int systemUserId) {
+        this.systemUserId = systemUserId;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

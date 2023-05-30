@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.function.BiFunction;
 
 public class EditPersonVariant02 implements VisiblePersonified {
@@ -38,16 +39,37 @@ public class EditPersonVariant02 implements VisiblePersonified {
             }
         });
 
-//        BiFunction<Person, Boolean, Boolean> action = (person, flag) -> TeacherManager.delete(person);
-//        Teacher teacher = new Teacher();
-//        this.jPanelForm.add(createTableRow("Natanael", "2514", teacher,action,"Edit", "#50D4F2", action,"Delete", "#F78484"));
 
     }
 
 
     @Override
-    public void setState(Person person) {
-        setPerson(person);
+    public void setState(Person person1) {
+        setPerson(person1);
+
+        if(person1 != null){
+            ArrayList<Teacher> teachers = TeacherManager.selectAll(getPerson().getPersonId());
+
+            for(Teacher teacher: teachers){
+                BiFunction<Person, Boolean, Boolean> actionDelete = (person, flag) -> TeacherManager.delete(person);
+                this.jPanelForm.add(createTableRow(teacher.getRegister(), "Professor", teacher,
+                        actionDelete,"Edit", "#50D4F2", actionDelete,"Delete", "#F78484"));
+            }
+
+            ArrayList<Student> students = StudentManager.selectAll(getPerson().getPersonId());
+            for(Student student: students){
+                BiFunction<Person, Boolean, Boolean> actionDelete = (person, flag) -> StudentManager.delete(person);
+                this.jPanelForm.add(createTableRow(student.getRegistration(), Student.typeIntToString(student.getTypeStudent()), student,
+                        actionDelete,"Edit", "#50D4F2", actionDelete,"Delete", "#F78484"));
+            }
+
+            ArrayList<SystemUser> systemUsers = SystemUserManager.selectAll(getPerson().getPersonId());
+            for(SystemUser systemUser: systemUsers){
+                BiFunction<Person, Boolean, Boolean> actionDelete = (person, flag) -> SystemUserManager.delete(person);
+                this.jPanelForm.add(createTableRow(Integer.toString(systemUser.getSystemUserId()), "Usuário", systemUser,
+                        actionDelete,"Edit", "#50D4F2", actionDelete,"Delete", "#F78484"));
+            }
+        }
     }
 
     private void initialize(){
@@ -57,7 +79,12 @@ public class EditPersonVariant02 implements VisiblePersonified {
         this.jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         this.jPanelForm.setLayout(new BoxLayout(this.jPanelForm, BoxLayout.Y_AXIS));
-        this.jPanelForm.add(createHead("Nome", "Matricula","Action", "Action"));
+        this.jPanelForm.add(createHead("Matricula", "Descrição","Action", "Action"));
+
+        //
+//        Teacher teacher = new Teacher();
+//
+
 
 //        this.jPanelBotttom.setVisible(false);
 

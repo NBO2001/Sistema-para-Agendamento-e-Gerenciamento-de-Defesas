@@ -61,6 +61,20 @@ public final class Student extends Person {
     /**
      * typeStudent is of the student is 1-graduation, 2-master and 3-doctorate
      */
+
+    public static String typeIntToString(int type){
+        switch (type){
+            case 1:
+                return "Aluno de Graduação";
+            case 2:
+                return "Aluno de Mestrado";
+            case 3:
+                return "Aluno de Doutorado";
+            default:
+                return null;
+        }
+    }
+
     public int getTypeStudent() {
         return typeStudent;
     }

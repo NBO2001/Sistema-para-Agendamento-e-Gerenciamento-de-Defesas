@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 public class StudentManager extends ConnectionBase{
 
@@ -86,6 +87,68 @@ public class StudentManager extends ConnectionBase{
 
         return student;
 
+    }
+
+    public static ArrayList<Student> selectAll(int personId){
+
+        ArrayList<Student> students = new ArrayList<>();
+        Student student;
+
+        String sql = "SELECT s.student_id, s.typeStudent, s.student_internal_id,p.personId, p.name, p.social_name, p.birthday, p.cpf, p.rg, p.email, p.phone_number " +
+                "FROM students s  " +
+                "JOIN people p ON s.personId = p.personId " +
+                "WHERE p.personId = ?";
+
+        try{
+            PreparedStatement stmt = conexao.prepareStatement(sql);
+
+            stmt.setInt(1, personId);
+
+
+            ResultSet resultSet = stmt.executeQuery();
+
+            while (resultSet.next()){
+
+                student = new Student();
+
+                student.setStudentId(resultSet.getInt("student_id"));
+                student.setTypeStudent(resultSet.getInt("typeStudent"));
+                student.setRegistration(resultSet.getString("student_internal_id"));
+
+                student.setPersonId(resultSet.getInt("personId"));
+                student.setName(resultSet.getString("name"));
+                student.setSocialName(resultSet.getString("social_name"));
+                student.setBirthday((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("birthday")));
+                student.setCpf(resultSet.getString("cpf"));
+                student.setRg(resultSet.getString("rg"));
+                student.setEmail(resultSet.getString("email"));
+                student.setPhoneNumber(resultSet.getString("phone_number"));
+
+                students.add(student);
+
+            }
+
+            resultSet.close();
+            stmt.close();
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        return students;
+
+
+    }
+
+    public static boolean delete(Person student){
+
+        Student student1 = (Student) student;
+
+        System.out.println(student1);
+        return true;
     }
 
 }
