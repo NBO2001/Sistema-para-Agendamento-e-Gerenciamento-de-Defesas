@@ -145,10 +145,29 @@ public class StudentManager extends ConnectionBase{
 
     public static boolean delete(Person student){
 
+        String sql = "DELETE FROM students WHERE student_id = ?";
+
         Student student1 = (Student) student;
 
-        System.out.println(student1);
-        return true;
+        try{
+            PreparedStatement stmt = conexao.prepareStatement(sql);
+
+            stmt.setInt(1, student1.getStudentId() );
+
+            int rowsAffected = stmt.executeUpdate();
+
+            return rowsAffected != 0;
+
+        } catch (SQLException e) {
+            System.out.println(e);
+            return false;
+        }
     }
 
+    public static Boolean update(Student student) {
+
+        System.out.println("Falta implentar o updade Studdent");
+        return true;
+
+    }
 }

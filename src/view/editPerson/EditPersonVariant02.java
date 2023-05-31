@@ -3,13 +3,16 @@ package view.editPerson;
 import interfaces.VisiblePersonified;
 import interfaces.Visibled;
 import model.*;
-import view.modalfindteacher.ModalFindTeacher;
+import view.modals.EditStudent;
+import view.modals.EditSystemUser;
+import view.modals.EditTeacher;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 public class EditPersonVariant02 implements VisiblePersonified {
@@ -25,6 +28,7 @@ public class EditPersonVariant02 implements VisiblePersonified {
     private JButton btnRelatorio;
     private JPanel jPanelHome;
     private JPanel jPanelForm;
+    private JButton btnCloser;
     private Person person;
 
     public EditPersonVariant02(Visibled afterView){
@@ -40,6 +44,16 @@ public class EditPersonVariant02 implements VisiblePersonified {
         });
 
 
+        btnCloser.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if(afterView != null) afterView.setVisible(true);
+
+                EditPersonVariant02.this.setVisible(false);
+
+            }
+        });
     }
 
 
@@ -52,24 +66,50 @@ public class EditPersonVariant02 implements VisiblePersonified {
 
             for(Teacher teacher: teachers){
                 BiFunction<Person, Boolean, Boolean> actionDelete = (person, flag) -> TeacherManager.delete(person);
+
+
+                BiConsumer<Person, Boolean> actionEdit = (person, flag) -> {
+                    new EditTeacher(person).setVisible(true);
+                };
+
                 this.jPanelForm.add(createTableRow(teacher.getRegister(), "Professor", teacher,
-                        actionDelete,"Edit", "#50D4F2", actionDelete,"Delete", "#F78484"));
+                        actionEdit,"Edit", "#50D4F2", actionDelete,"Delete", "#F78484"));
             }
 
             ArrayList<Student> students = StudentManager.selectAll(getPerson().getPersonId());
             for(Student student: students){
+
                 BiFunction<Person, Boolean, Boolean> actionDelete = (person, flag) -> StudentManager.delete(person);
+
+                BiConsumer<Person, Boolean> actionEdit = (person, flag) -> {
+                    new EditStudent(person).setVisible(true);
+                };
+
                 this.jPanelForm.add(createTableRow(student.getRegistration(), Student.typeIntToString(student.getTypeStudent()), student,
-                        actionDelete,"Edit", "#50D4F2", actionDelete,"Delete", "#F78484"));
+                        actionEdit,"Edit", "#50D4F2", actionDelete,"Delete", "#F78484"));
             }
 
             ArrayList<SystemUser> systemUsers = SystemUserManager.selectAll(getPerson().getPersonId());
             for(SystemUser systemUser: systemUsers){
                 BiFunction<Person, Boolean, Boolean> actionDelete = (person, flag) -> SystemUserManager.delete(person);
+
+                BiConsumer<Person, Boolean> actionEdit = (person, flag) -> {
+                    new EditSystemUser(person).setVisible(true);
+                };
+
                 this.jPanelForm.add(createTableRow(Integer.toString(systemUser.getSystemUserId()), "Usuário", systemUser,
-                        actionDelete,"Edit", "#50D4F2", actionDelete,"Delete", "#F78484"));
+                        actionEdit,"Edit", "#50D4F2", actionDelete,"Delete", "#F78484"));
             }
         }
+    }
+
+    private void clening(){
+        for (Component component : jPanelForm.getComponents()) {
+            jPanelForm.remove(component);
+        }
+
+        this.jPanelForm.add(createHead("Matricula", "Descrição","Action", "Action"));
+
     }
 
     private void initialize(){
@@ -81,12 +121,6 @@ public class EditPersonVariant02 implements VisiblePersonified {
         this.jPanelForm.setLayout(new BoxLayout(this.jPanelForm, BoxLayout.Y_AXIS));
         this.jPanelForm.add(createHead("Matricula", "Descrição","Action", "Action"));
 
-        //
-//        Teacher teacher = new Teacher();
-//
-
-
-//        this.jPanelBotttom.setVisible(false);
 
         this.jFrame.add(panel1);
     }
@@ -127,7 +161,7 @@ public class EditPersonVariant02 implements VisiblePersonified {
     }
 
     private JPanel createTableRow(String name, String enrollment,Person person,
-                                  BiFunction<Person, Boolean, Boolean> action_fisrt, String label_first, String color_first,
+                                  BiConsumer<Person, Boolean> action_fisrt, String label_first, String color_first,
                                   BiFunction<Person, Boolean, Boolean> action_sec, String label_sec, String color_sec) {
         JPanel rowPanel = new JPanel();
         rowPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -149,7 +183,7 @@ public class EditPersonVariant02 implements VisiblePersonified {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 Person person1 = (Person) actionButton.getClientProperty("person");
-                action_fisrt.apply(person1, true);
+                action_fisrt.accept(person1, true);
 
             }
         });
@@ -168,7 +202,24 @@ public class EditPersonVariant02 implements VisiblePersonified {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 Person person1 = (Person) actionButtonSec.getClientProperty("person");
-                action_sec.apply(person1, true);
+
+                int choice = JOptionPane.showConfirmDialog(null,
+                        "Are you sure you want to delete?", "Confirmation", JOptionPane.YES_NO_OPTION);
+                if (choice == JOptionPane.YES_OPTION) {
+                    // Perform delete operation
+                    boolean retuned_function = action_sec.apply(person1, true);
+
+                    if(retuned_function){
+
+                        JOptionPane.showMessageDialog(null,"Excluido com sucesso!!");
+                        EditPersonVariant02.this.clening();
+                        EditPersonVariant02.this.setState(person1);
+                    }else{
+                        JOptionPane.showMessageDialog(null,"Error ao tentar!","Erro!", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                }
+
 
             }
         });

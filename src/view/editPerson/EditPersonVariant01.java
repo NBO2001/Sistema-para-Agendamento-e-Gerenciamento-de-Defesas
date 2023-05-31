@@ -46,6 +46,7 @@ public class EditPersonVariant01 implements Visibled {
     private JPanel jPanelBotttom;
     private JButton btnExit;
     private JButton btnAlter;
+    private JButton btnUpdateAndNext;
 
     private Person person;
 
@@ -287,6 +288,23 @@ public class EditPersonVariant01 implements Visibled {
                 editPersonVariant02.setVisible(true);
                 EditPersonVariant01.this.setVisible(false);
 
+            }
+        });
+        btnUpdateAndNext.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+
+                if(People.update(EditPersonVariant01.this.getPerson())){
+                    JOptionPane.showMessageDialog(null, "Atualizado com sucesso!");
+                }else{
+                    JOptionPane.showMessageDialog(null, "Error inserting.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
+                EditPersonVariant02 editPersonVariant02 = new EditPersonVariant02(afterView);
+                editPersonVariant02.setState(EditPersonVariant01.this.getPerson());
+                editPersonVariant02.setVisible(true);
+                EditPersonVariant01.this.setVisible(false);
             }
         });
     }

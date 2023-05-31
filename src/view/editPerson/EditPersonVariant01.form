@@ -460,7 +460,7 @@
                                               <text value="Sai Sem Salvar"/>
                                             </properties>
                                           </component>
-                                          <component id="1ce60" class="javax.swing.JButton">
+                                          <component id="1ce60" class="javax.swing.JButton" binding="btnUpdateAndNext">
                                             <constraints>
                                               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false">
                                                 <minimum-size width="150" height="80"/>

@@ -14,6 +14,11 @@ public class SystemUserManager extends ConnectionBase{
         super();
     }
 
+    public static boolean update(SystemUser systemUser) {
+        System.out.println("Falta implentar o update do shstemda user");
+        return true;
+    }
+
     public SystemUser selectUser(SystemUser systemUser){
 
 
@@ -112,9 +117,22 @@ public class SystemUserManager extends ConnectionBase{
 
     public static boolean delete(Person systemUser){
 
+        // SQL delete statement
+        String sql = "DELETE FROM system_users WHERE system_user_id = ?";
         SystemUser systemUser1 = (SystemUser) systemUser;
 
-        System.out.println(systemUser1);
-        return true;
+        try{
+            PreparedStatement stmt = conexao.prepareStatement(sql);
+
+            stmt.setInt(1, systemUser1.getSystemUserId() );
+
+            int rowsAffected = stmt.executeUpdate();
+
+            return rowsAffected != 0;
+
+        } catch (SQLException e) {
+            System.out.println(e);
+            return false;
+        }
     }
 }

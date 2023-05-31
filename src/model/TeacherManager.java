@@ -194,9 +194,28 @@ public class TeacherManager extends ConnectionBase{
 
     public static boolean delete(Person teacher){
 
+        // SQL delete statement
+        String sql = "DELETE FROM teachers WHERE teacher_id = ?";
         Teacher teacher1 = (Teacher) teacher;
 
-        System.out.println(teacher1);
+        try{
+            PreparedStatement stmt = conexao.prepareStatement(sql);
+
+            stmt.setInt(1, teacher1.getTeacherId() );
+
+            int rowsAffected = stmt.executeUpdate();
+
+            return rowsAffected != 0;
+        } catch (SQLException e) {
+            System.out.println(e);
+            return false;
+        }
+
+
+    }
+
+    public static boolean update(Teacher teacher1) {
+        System.out.println("Falta implentar o update Teacher");
         return true;
     }
 }
