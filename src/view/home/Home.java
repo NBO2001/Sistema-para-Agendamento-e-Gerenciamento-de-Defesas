@@ -9,6 +9,7 @@ import view.cadastrodefesa.CadastroDefesaVariant01;
 import view.cadastroprofessor.CadastroProfessor;
 import view.cadastrousuario.CadastroUsuario;
 import view.editPerson.EditPersonVariant01;
+import view.modals.ModalViewDefense;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -221,7 +222,8 @@ public class Home implements Visibled {
             throw new RuntimeException(e);
         }
 
-        line.add(Home.createCellButton("Open", color));
+
+        line.add(Home.createCellButton("Open", color, defense));
 
         return line;
     }
@@ -252,7 +254,7 @@ public class Home implements Visibled {
         return conteinnerTitle;
     }
 
-    public static JPanel createCellButton(String title, String color){
+    public static JPanel createCellButton(String title, String color, Defense defense){
 
         JPanel conteinnerTitle = new JPanel();
         conteinnerTitle.setPreferredSize(new Dimension(300,50));
@@ -261,7 +263,22 @@ public class Home implements Visibled {
         JButton jButton = new JButton(title);
         jButton.setFont(new Font("Ubuntu", Font.PLAIN, 20));
         jButton.setPreferredSize(new Dimension(150,25));
+
+        actionCreate(jButton, defense);
+
         conteinnerTitle.add(jButton);
         return conteinnerTitle;
+    }
+
+    private static void actionCreate(JButton button, Defense defense){
+
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                new ModalViewDefense(defense).setVisible(true);
+            }
+        });
+
     }
 }

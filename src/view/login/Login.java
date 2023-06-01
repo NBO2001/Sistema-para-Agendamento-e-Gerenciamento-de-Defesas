@@ -7,6 +7,7 @@ import utils.Utils;
 import view.home.Home;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
@@ -60,6 +61,8 @@ public class Login implements Visibled {
 
         this.jFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.jFrame.setMinimumSize(new Dimension(500,600));
+
 
         this.jFrame.add(panel1);
 
