@@ -3,10 +3,15 @@ package model;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 public class DefenseManager extends ConnectionBase{
 
+    public DefenseManager(){
+        super();
+    }
     public static boolean insert(Defense defense){
 
         String sql = "INSERT INTO defense (type_defense, defense_title, date, local, teacher_advisor, student_defending, status) " +
@@ -56,5 +61,88 @@ public class DefenseManager extends ConnectionBase{
         }
 
         return true;
+    }
+
+    public ArrayList<Defense> selectAllOppend(){
+
+        ArrayList<Defense> defenses = new ArrayList<>();
+        Teacher teacher;
+        Student student;
+        Defense defense;
+
+        String sql = "SELECT d.defense_id, d.type_defense, d.defense_title, d.local, d.final_pontuation, d.status, d.observation, d.date, d.student_defending, " +
+                "s.typeStudent, s.student_internal_id, p.personId as personId_student, p.name as name_student , p.social_name as social_name_student, p.birthday as birthday_student,   " +
+                "p.cpf as cpf_student, p.rg as rg_student, p.email as email_student, p.phone_number as phone_number_student,  " +
+                "t.teacher_id, t.teacher_internal_id,p2.personId as personId_teacher, p2.name as name_teacher, p2.social_name as social_name_teacher,  " +
+                "p2.birthday as birthday_teacher, p2.cpf as cpf_teacher, p2.rg as rg_teacher, p2.email as email_teacher, p2.phone_number as phone_number_teacher " +
+                "FROM defense d " +
+                "JOIN students s ON d.student_defending = s.student_id " +
+                "JOIN people p ON s.personId = p.personId " +
+                "JOIN teachers t ON d.teacher_advisor = t.teacher_id " +
+                "JOIN people p2 ON t.personId = p2.personId " +
+                "WHERE d.status = ?";
+
+        try {
+            PreparedStatement stmt = conexao.prepareStatement(sql);
+
+            stmt.setInt(1,0);
+
+            ResultSet resultSet = stmt.executeQuery();
+
+            while (resultSet.next()){
+
+                student = new Student();
+
+                student.setStudentId(resultSet.getInt("student_defending"));
+                student.setTypeStudent(resultSet.getInt("typeStudent"));
+                student.setRegistration(resultSet.getString("student_internal_id"));
+
+                student.setPersonId(resultSet.getInt("personId_student"));
+                student.setName(resultSet.getString("name_student"));
+                student.setSocialName(resultSet.getString("social_name_student"));
+                student.setBirthday((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("birthday_student")));
+                student.setCpf(resultSet.getString("cpf_student"));
+                student.setRg(resultSet.getString("rg_student"));
+                student.setEmail(resultSet.getString("email_student"));
+                student.setPhoneNumber(resultSet.getString("phone_number_student"));
+
+                teacher = new Teacher();
+
+                teacher.setTeacherId(resultSet.getInt("teacher_id"));
+                teacher.setRegister(resultSet.getString("teacher_internal_id"));
+
+                teacher.setPersonId(resultSet.getInt("personId_teacher"));
+                teacher.setName(resultSet.getString("name_teacher"));
+                teacher.setSocialName(resultSet.getString("social_name_teacher"));
+                teacher.setBirthday((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("birthday_teacher")));
+                teacher.setCpf(resultSet.getString("cpf_teacher"));
+                teacher.setRg(resultSet.getString("rg_teacher"));
+                teacher.setEmail(resultSet.getString("email_teacher"));
+                teacher.setPhoneNumber(resultSet.getString("phone_number_teacher"));
+
+                defense = new Defense();
+
+                defense.setDefenseId(resultSet.getInt("defense_id"));
+                defense.setTypeDefense(resultSet.getInt("type_defense"));
+                defense.setDefenseTitle(resultSet.getString("defense_title"));
+                defense.setLocal(resultSet.getString("local"));
+                defense.setFinalPontuation(resultSet.getDouble("final_pontuation"));
+                defense.setStatus(resultSet.getInt("status"));
+                defense.setObservation(resultSet.getString("observation"));
+                defense.setDate((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("date")));
+                defense.setStudentDefending(student);
+                defense.setTeacherAdvisor(teacher);
+
+                defenses.add(defense);
+
+            }
+
+            return defenses;
+        }catch (SQLException | ParseException e) {
+            System.out.println(e);
+
+            return null;
+
+        }
     }
 }
