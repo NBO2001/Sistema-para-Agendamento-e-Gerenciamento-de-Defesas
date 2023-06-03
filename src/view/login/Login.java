@@ -7,9 +7,11 @@ import utils.Utils;
 import view.home.Home;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.RoundRectangle2D;
 import java.util.Arrays;
 
 public class Login implements Visibled {
@@ -33,7 +35,20 @@ public class Login implements Visibled {
         initialize();
         btnLogin.addMouseListener(new MouseAdapter() {
             @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                btnLogin.setBackground(Color.decode("#3763DB"));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+                btnLogin.setBackground(Color.decode("#49A3F2"));
+            }
+
+            @Override
             public void mouseClicked(MouseEvent e) {
+
                 super.mouseClicked(e);
 
                 String userName = Utils.encryptTolkienName(textFieldUsername.getText());
@@ -59,10 +74,17 @@ public class Login implements Visibled {
     private void initialize(){
         this.jFrame = new JFrame("Login");
 
-        this.jFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.jFrame.setMinimumSize(new Dimension(500,600));
+        this.jFrame.setPreferredSize(new Dimension(800,800));
+        this.jFrame.setLocationRelativeTo(null);
 
+
+        textFieldUsername.setFont(new Font("Ubuntu", Font.PLAIN, 20));
+        textFieldUsername.setBorder(new EmptyBorder(5, 5, 5,5));
+
+        passwordField1.setFont(new Font("Ubuntu", Font.PLAIN, 20));
+        passwordField1.setBorder(new EmptyBorder(5, 5, 5,5));
 
         this.jFrame.add(panel1);
 
@@ -71,4 +93,6 @@ public class Login implements Visibled {
     public void setVisible(boolean value){
         this.jFrame.setVisible(value);
     }
+
+
 }

@@ -63,6 +63,41 @@ public class DefenseManager extends ConnectionBase{
         return true;
     }
 
+    public static boolean update(Defense defense){
+
+        String sql = "UPDATE defense  SET type_defense = ?, defense_title=?, date=?, local=?, teacher_advisor=?, student_defending=?, status=?, final_pontuation=?, observation=? " +
+                " WHERE defense_id = ?";
+
+        // Create a SimpleDateFormat object to format the date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+            PreparedStatement stmt = conexao.prepareStatement(sql);
+
+            stmt.setInt(1, defense.getTypeDefense());
+            stmt.setString(2, defense.getDefenseTitle());
+            stmt.setString(3,  dateFormat.format(defense.getDate()).toString());
+            stmt.setString(4, defense.getLocal() );
+            stmt.setInt(5, defense.getTeacherAdvisor().getTeacherId());
+            stmt.setInt(6, defense.getStudentDefending().getStudentId());
+            stmt.setInt(7, defense.getStatus());
+
+            stmt.setDouble(8, defense.getFinalPontuation());
+            stmt.setString(9, defense.getObservation());
+
+            stmt.setInt(10, defense.getDefenseId());
+
+            int updIfo = stmt.executeUpdate();
+
+            return updIfo != 0;
+
+        }catch (SQLException e) {
+            System.out.println(e);
+            return false;
+        }
+
+    }
+
     public ArrayList<Defense> selectAllOppend(){
 
         ArrayList<Defense> defenses = new ArrayList<>();
@@ -80,7 +115,7 @@ public class DefenseManager extends ConnectionBase{
                 "JOIN people p ON s.personId = p.personId " +
                 "JOIN teachers t ON d.teacher_advisor = t.teacher_id " +
                 "JOIN people p2 ON t.personId = p2.personId " +
-                "WHERE d.status = ?";
+                "WHERE d.status = ? ORDER BY d.date";
 
         try {
             PreparedStatement stmt = conexao.prepareStatement(sql);
@@ -144,5 +179,38 @@ public class DefenseManager extends ConnectionBase{
             return null;
 
         }
+    }
+
+    public static boolean delete(Defense defense){
+
+        String sql = "DELETE FROM boardOfTeachers " +
+                "WHERE defense_id = ?";
+
+        try{
+            PreparedStatement stmt = conexao.prepareStatement(sql);
+
+            stmt.setInt(1, defense.getDefenseId());
+
+            stmt.executeUpdate();
+
+            sql = "DELETE FROM defense " +
+                    "WHERE defense_id = ?";
+
+            stmt.close();
+
+            stmt = conexao.prepareStatement(sql);
+
+            stmt.setInt(1, defense.getDefenseId());
+
+            int rowsAffected = stmt.executeUpdate();
+
+            return rowsAffected != 0;
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 }

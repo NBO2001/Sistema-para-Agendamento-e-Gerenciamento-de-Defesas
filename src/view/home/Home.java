@@ -1,6 +1,7 @@
 package view.home;
 
 import interfaces.Visibled;
+import model.BoardOfTeachers;
 import model.Defense;
 import model.DefenseManager;
 import view.cadastro.Cadastro;
@@ -276,6 +277,7 @@ public class Home implements Visibled {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+                defense.setBoardOfTeachers(BoardOfTeachers.selectAll(defense.getDefenseId()));
                 new ModalViewDefense(defense).setVisible(true);
             }
         });

@@ -147,4 +147,15 @@ public class Defense {
                 return "null";
         }
     }
+
+    public static Double stringToDouble(String value){
+        Double val = 0.0;
+        try{
+            val = Double.parseDouble(value);
+        }catch (Exception e){
+            System.out.println(e);
+        }
+
+        return val;
+    }
 }
