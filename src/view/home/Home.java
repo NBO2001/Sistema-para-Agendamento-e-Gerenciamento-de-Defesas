@@ -2,6 +2,7 @@ package view.home;
 
 import interfaces.Visibled;
 import model.BoardOfTeachers;
+import model.ConstatesPath;
 import model.Defense;
 import model.DefenseManager;
 import view.cadastro.Cadastro;
@@ -10,11 +11,14 @@ import view.cadastrodefesa.CadastroDefesaVariant01;
 import view.cadastroprofessor.CadastroProfessor;
 import view.cadastrousuario.CadastroUsuario;
 import view.editPerson.EditPersonVariant01;
+import view.gerenciacadastros.GerenciarCadastros;
 import view.modals.ModalViewDefense;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -30,9 +34,6 @@ public class Home implements Visibled {
     private JPanel panel1;
     private JButton btnMenu;
     private JPanel jPanelMenu;
-    private JButton btnCadStu;
-    private JButton btnCadTeac;
-    private JButton btnCadUser;
     private JButton btnCadDefense;
     private JButton btnAlterCad;
     private JButton btnRelatorio;
@@ -40,59 +41,11 @@ public class Home implements Visibled {
 
     private JPanel jPanelTable;
     private JButton btnAlterDefesas;
+    private JButton btnGerenciarCad;
 
     public Home(){
         initialize();
-        btnMenu.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                jPanelMenu.setVisible(!jPanelMenu.isVisible());
 
-            }
-        });
-        btnCadStu.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Cadastro(Home.this, new CadastroAluno(Home.this)).setVisible(true);
-                Home.this.setVisible(false);
-            }
-        });
-
-        btnCadTeac.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Cadastro(Home.this, new CadastroProfessor(Home.this)).setVisible(true);
-                Home.this.setVisible(false);
-            }
-        });
-
-        btnCadUser.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new Cadastro(Home.this, new CadastroUsuario(Home.this)).setVisible(true);
-                Home.this.setVisible(false);
-            }
-        });
-        btnCadDefense.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new CadastroDefesaVariant01(Home.this ).setVisible(true);
-                Home.this.setVisible(false);
-            }
-        });
-        btnAlterCad.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new EditPersonVariant01(Home.this).setVisible(true);
-                Home.this.setVisible(false);
-            }
-        });
     }
 
     private void initialize(){
@@ -104,6 +57,33 @@ public class Home implements Visibled {
         this.jFrame.setMinimumSize(new Dimension(800,900));
         jPanelMenu.setVisible(false);
 
+        btnMenu.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                jPanelMenu.setVisible(!jPanelMenu.isVisible());
+
+            }
+        });
+
+        btnCadDefense.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                new CadastroDefesaVariant01(Home.this ).setVisible(true);
+                Home.this.setVisible(false);
+            }
+        });
+
+        btnGerenciarCad.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                new GerenciarCadastros(Home.this).setVisible(true);
+                Home.this.setVisible(false);
+            }
+        });
+
 //        updateHome();
 
         this.jFrame.add(panel1);
@@ -113,18 +93,7 @@ public class Home implements Visibled {
         for (Component component : jPanelTable.getComponents()) {
             jPanelTable.remove(component);
         }
-
-        JPanel line1 = new JPanel();
-        line1.setLayout(new BoxLayout(line1,BoxLayout.X_AXIS));
-
-        line1.add(Home.createCell("Titulo", "#EAEAEA"));
-        line1.add(Home.createCell("Aluno", "#EAEAEA"));
-        line1.add(Home.createCell("Professor", "#EAEAEA"));
-        line1.add(Home.createCell("Data", "#EAEAEA"));
-        line1.add(Home.createCell("Action", "#EAEAEA"));
-
-
-        jPanelTable.add(line1);
+        jPanelTable.add(Home.headTable());
 
     }
 
@@ -137,9 +106,9 @@ public class Home implements Visibled {
         for(Defense defense: defenses){
 
             if(color){
-                jPanelTable.add(Home.createElementLine(defense, "#ffffff"));
+                jPanelTable.add(Home.rowTableCreate(defense, "#F1F1F1", "#D3E2EB" ));
             }else{
-                jPanelTable.add(Home.createElementLine(defense, "#EAEAEA"));
+                jPanelTable.add(Home.rowTableCreate(defense, "#EAEAEA", "#D3E2EB"));
             }
 
             color = !color;
@@ -149,6 +118,7 @@ public class Home implements Visibled {
     public void setVisible(boolean value){
         jPanelMenu.setVisible(false);
         this.jFrame.setVisible(value);
+
         if(value == false){
             clening();
         }else{
@@ -158,76 +128,143 @@ public class Home implements Visibled {
 
     private void createUIComponents() {
         jPanelHome = new JPanel();
-        jPanelHome.setLayout(new BoxLayout(jPanelHome,BoxLayout.Y_AXIS));
+        jPanelHome.setBackground(Color.decode("#ffffff"));
 
-        JPanel jPanelTop = new JPanel();
-        jPanelTop.setLayout(new BorderLayout());
-        jPanelTop.setBackground(Color.decode("#FFFFFF"));
+        GroupLayout layout = new GroupLayout(jPanelHome);
+        jPanelHome.setLayout(layout);
+        layout.setAutoCreateContainerGaps(true);
+        layout.setAutoCreateGaps(true);
 
-
-        JLabel label = new JLabel("Defesas futuras");
+        JLabel label = new JLabel("Defesas Futuras");
         label.setFont(new Font("Ubuntu", Font.BOLD, 40));
-        label.setBorder(new EmptyBorder(20, 20, 20,0));
-        jPanelTop.add(label, BorderLayout.LINE_START);
 
         jPanelTable = new JPanel();
-        jPanelTable.setLayout(new BoxLayout(jPanelTable,BoxLayout.Y_AXIS));
-        jPanelTable.setBackground(Color.decode("#FFFFFF"));
+        jPanelTable.setBackground(Color.decode("#ffffff"));
+        jPanelTable.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jPanelTable.setLayout(new BoxLayout(jPanelTable, BoxLayout.Y_AXIS));
+        jPanelTable.add(Home.headTable());
 
-        jPanelTable.setMinimumSize(new Dimension(800,500));
-        jPanelTable.setPreferredSize(new Dimension(1000,500));
-        jPanelTable.setMaximumSize(new Dimension(1000,500));
+        JScrollPane scrollPane = new JScrollPane(jPanelTable);
+        scrollPane.setBorder(null); // Remove the color border
 
-        JPanel line1 = new JPanel();
-        line1.setLayout(new BoxLayout(line1,BoxLayout.X_AXIS));
+        layout.setHorizontalGroup(
+                layout.createParallelGroup()
+                        .addComponent(label, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(scrollPane)
+        );
 
-        line1.add(Home.createCell("Titulo", "#EAEAEA"));
-        line1.add(Home.createCell("Aluno", "#EAEAEA"));
-        line1.add(Home.createCell("Professor", "#EAEAEA"));
-        line1.add(Home.createCell("Data", "#EAEAEA"));
-        line1.add(Home.createCell("Action", "#EAEAEA"));
-
-
-        jPanelTable.add(line1);
-
-        JScrollPane jScrollPane = new JScrollPane(jPanelTable);
-        jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-
-
-        jPanelHome.add(jPanelTop);
-        jPanelHome.add(jScrollPane);
-
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addComponent(label, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
+        );
     }
 
-    private static JPanel createElementLine(Defense defense, String color){
-        JPanel line = new JPanel();
-        line.setLayout(new BoxLayout(line,BoxLayout.X_AXIS));
-        line.setMinimumSize(new Dimension(800,200));
-        line.add(Home.createCellElement(defense.getDefenseTitle(), color));
-        line.add(Home.createCellElement(defense.getStudentDefending().getName(), color));
-        line.add(Home.createCellElement(defense.getTeacherAdvisor().getName(), color));
-
-        String inputFormat = "yyyy-MM-dd";
-        String outputFormat = "dd/MM/yyyy";
-
-        DateFormat inputDateFormat = new SimpleDateFormat(inputFormat);
-        DateFormat outputDateFormat = new SimpleDateFormat(outputFormat);
-        // Parse the input date string into a Date object
-        try{
-            Date date = inputDateFormat.parse(defense.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString());
-            // Format the Date object into the desired output format
-            String outputDate = outputDateFormat.format(date);
-            line.add(Home.createCellElement(outputDate, color));
-
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
 
 
-        line.add(Home.createCellButton("Open", color, defense));
+    private static JPanel headTable(){
+        JPanel jPanel = new JPanel();
 
-        return line;
+        GroupLayout layout = new GroupLayout(jPanel);
+        jPanel.setLayout(layout);
+        layout.setAutoCreateGaps(true);
+
+        JPanel jPanel1 =  Home.createCell("Titulo", "#EAEAEA");
+        JPanel jPanel2 =  Home.createCell("Aluno", "#EAEAEA");
+        JPanel jPanel3 = Home.createCell("Professor", "#EAEAEA");
+        JPanel jPanel4 = Home.createCell("Data", "#EAEAEA");
+        JPanel jPanel5 = Home.createCell("Action", "#EAEAEA");
+
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jPanel3, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jPanel4, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jPanel5, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                        )
+        );
+
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jPanel3, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jPanel4, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jPanel5, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                        )
+        );
+
+        return  jPanel;
     }
+
+    private static JPanel rowTableCreate(Defense defense, String color, String secondColor) {
+        JPanel jPanel = new JPanel();
+
+
+        GroupLayout layout = new GroupLayout(jPanel);
+        jPanel.setLayout(layout);
+        layout.setAutoCreateGaps(true);
+
+        JPanel jPanel1 = Home.createCellElement(defense.getDefenseTitle(), color);
+        JPanel jPanel2 = Home.createCellElement(defense.getStudentDefending().getName(), color);
+        JPanel jPanel3 = Home.createCellElement(defense.getTeacherAdvisor().getName(), color);
+        JPanel jPanel4 = Home.createCellElement(Defense.dateToString(defense.getDate()), color);
+        JPanel jPanel5 = Home.createCellButton("Viee detalhes", color, defense);
+
+        jPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                jPanel.setBackground(Color.decode(secondColor)); // Set the hover color
+                jPanel1.setBackground(Color.decode(secondColor));
+                jPanel2.setBackground(Color.decode(secondColor));
+                jPanel3.setBackground(Color.decode(secondColor));
+                jPanel4.setBackground(Color.decode(secondColor));
+                jPanel5.setBackground(Color.decode(secondColor));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                jPanel.setBackground(Color.decode(color)); // Set the original color when the mouse exits
+                jPanel1.setBackground(Color.decode(color));
+                jPanel2.setBackground(Color.decode(color));
+                jPanel3.setBackground(Color.decode(color));
+                jPanel4.setBackground(Color.decode(color));
+                jPanel5.setBackground(Color.decode(color));
+            }
+        });
+
+        // Add MouseListener to jPanel1 for hover color change
+
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel3, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel4, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel5, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                        )
+        );
+
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel3, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel4, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel5, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                        )
+        );
+
+        return jPanel;
+    }
+
 
     public static JPanel createCell(String title, String color){
 
@@ -241,19 +278,33 @@ public class Home implements Visibled {
         return conteinnerTitle;
     }
 
-    public static JPanel createCellElement(String title, String color){
-
+    public static JPanel createCellElement(String title, String color) {
         JPanel conteinnerTitle = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        conteinnerTitle.setPreferredSize(new Dimension(300,50));
+        conteinnerTitle.setPreferredSize(new Dimension(300, 50));
         conteinnerTitle.setBackground(Color.decode(color));
 
-        String labelText = "<html><div style='width: 300px; word-wrap: break-word;'>" + title + "</div></html>";
+        String labelText = title;
+        JTextField jTextField = new JTextField(labelText);
+        jTextField.setFont(new Font("Ubuntu", Font.PLAIN, 20));
+        jTextField.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
 
-        JLabel jLabel = new JLabel(labelText);
-        jLabel.setFont(new Font("Ubuntu", Font.PLAIN, 20));
-        conteinnerTitle.add(jLabel);
+
+        // Set the text field to be read-only and selectable
+        jTextField.setEditable(false);
+        jTextField.setBackground(null);
+        jTextField.setBorder(null);
+        jTextField.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                jTextField.requestFocusInWindow();
+                jTextField.selectAll();
+            }
+        });
+
+        conteinnerTitle.add(jTextField);
         return conteinnerTitle;
     }
+
 
     public static JPanel createCellButton(String title, String color, Defense defense){
 
@@ -261,9 +312,18 @@ public class Home implements Visibled {
         conteinnerTitle.setPreferredSize(new Dimension(300,50));
         conteinnerTitle.setBackground(Color.decode(color));
 
-        JButton jButton = new JButton(title);
-        jButton.setFont(new Font("Ubuntu", Font.PLAIN, 20));
-        jButton.setPreferredSize(new Dimension(150,25));
+        JButton jButton = new JButton();
+        jButton.setPreferredSize(new Dimension(50,50));
+        jButton.setBackground(Color.decode(color));
+        jButton.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jButton.setToolTipText(title);
+
+        // Mudar depois
+        String imagePath = ConstatesPath.PATH + "/src/imgs/search_30x30.jpg";
+
+        ImageIcon icon = new ImageIcon(imagePath);
+
+        jButton.setIcon(icon);
 
         actionCreate(jButton, defense);
 

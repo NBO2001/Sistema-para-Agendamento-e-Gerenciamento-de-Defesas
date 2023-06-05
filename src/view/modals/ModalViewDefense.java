@@ -49,6 +49,7 @@ public class ModalViewDefense implements Visibled {
         jFrame.setPreferredSize(new Dimension(850,800));
         jFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         jFrame.setBackground(Color.decode("#FFFFFF"));
+        jFrame.setLocationRelativeTo(null);
 
         JPanel jPanel = new JPanel();
         jPanel.setBackground(Color.decode("#FFFFFF"));

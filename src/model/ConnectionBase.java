@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class ConnectionBase {
 
-    private static String url = "jdbc:sqlite:/home/natanael/Sistema-para-Agendamento-e-Gerenciamento-de-Defesas/base/base.sqlite3";
+    private static String url = "jdbc:sqlite:" + ConstatesPath.PATH + ConstatesPath.DATABASE;
     protected static Connection conexao;
 
     public ConnectionBase(){

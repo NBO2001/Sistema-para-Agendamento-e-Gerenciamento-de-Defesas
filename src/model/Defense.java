@@ -1,10 +1,12 @@
 package model;
 
 import view.cadastrodefesa.CadastroDefesaVariant03;
+import view.home.Home;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -157,5 +159,26 @@ public class Defense {
         }
 
         return val;
+    }
+
+    public static String dateToString(Date dateIn){
+
+        String inputFormat = "yyyy-MM-dd";
+        String outputFormat = "dd/MM/yyyy";
+
+        DateFormat inputDateFormat = new SimpleDateFormat(inputFormat);
+        DateFormat outputDateFormat = new SimpleDateFormat(outputFormat);
+
+        try{
+            Date date = inputDateFormat.parse(dateIn.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString());
+            // Format the Date object into the desired output format
+            String outputDate = outputDateFormat.format(date);
+
+            return outputDate;
+
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
