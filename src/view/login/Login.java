@@ -51,6 +51,12 @@ public class Login implements Visibled {
 
                 super.mouseClicked(e);
 
+                if((textFieldUsername.getText().length() == 0) || (new String(passwordField1.getPassword()).length() == 0 ) ){
+
+                    JOptionPane.showMessageDialog(null, "Please type your username and password.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
                 String userName = Utils.encryptTolkienName(textFieldUsername.getText());
 
                 // Modificar depois, se der tempo, adicionar seguranca nisso.

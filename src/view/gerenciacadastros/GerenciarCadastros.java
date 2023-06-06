@@ -105,9 +105,9 @@ public class GerenciarCadastros implements Visibled {
         for(Person person: people){
 
             if(color){
-                jPanelTable.add(GerenciarCadastros.rowTableCreate(person, "#F1F1F1", "#D3E2EB" ));
+                jPanelTable.add(rowTableCreate(person, "#F1F1F1", "#D3E2EB" ));
             }else{
-                jPanelTable.add(GerenciarCadastros.rowTableCreate(person, "#EAEAEA", "#D3E2EB"));
+                jPanelTable.add(rowTableCreate(person, "#EAEAEA", "#D3E2EB"));
             }
 
             color = !color;
@@ -138,9 +138,9 @@ public class GerenciarCadastros implements Visibled {
                 for(Person person: People.selectAll(querryPerson.jTextField.getText())){
                     
                     if(color){
-                        jPanelTable.add(GerenciarCadastros.rowTableCreate(person, "#F1F1F1", "#D3E2EB" ));
+                        jPanelTable.add(rowTableCreate(person, "#F1F1F1", "#D3E2EB" ));
                     }else{
-                        jPanelTable.add(GerenciarCadastros.rowTableCreate(person, "#EAEAEA", "#D3E2EB"));
+                        jPanelTable.add(rowTableCreate(person, "#EAEAEA", "#D3E2EB"));
                     }
 
                     color = !color;
@@ -162,7 +162,7 @@ public class GerenciarCadastros implements Visibled {
         jFrame.setVisible(value);
     }
 
-    private static JPanel rowTableCreate(Person person, String color, String secondColor) {
+    private JPanel rowTableCreate(Person person, String color, String secondColor) {
         JPanel jPanel = new JPanel();
 
         GroupLayout layout = new GroupLayout(jPanel);
@@ -181,7 +181,7 @@ public class GerenciarCadastros implements Visibled {
         JPanel jPanel3 = Home.createCellElement(person.getEmail(), color);
         JPanel jPanel4 = Home.createCellElement(Defense.dateToString(person.getBirthday()), color);
         JPanel jPanel5 = Home.createCellElement(person.getPhoneNumber(), color);
-        JPanel jPanel6 = GerenciarCadastros.createCellButton("Viee detalhes", color, person);
+        JPanel jPanel6 = createCellButton("Viee detalhes", color, person);
 
         jPanel.addMouseListener(new MouseAdapter() {
             @Override
@@ -246,7 +246,7 @@ public class GerenciarCadastros implements Visibled {
         jFrame.repaint();
 
     }
-    public static JPanel createCellButton(String title, String color, Person person){
+    public JPanel createCellButton(String title, String color, Person person){
 
         JPanel conteinnerTitle = new JPanel();
         conteinnerTitle.setPreferredSize(new Dimension(300,50));
@@ -360,13 +360,14 @@ public class GerenciarCadastros implements Visibled {
 
         return  jPanel;
     }
-    private static void actionCreate(JButton button, Person person){
+    private void actionCreate(JButton button, Person person){
 
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                System.out.println("Implementar a linha 300");
+                new EditPersonVariant01(GerenciarCadastros.this, person).setVisible(true);
+                GerenciarCadastros.this.setVisible(false);
             }
         });
 

@@ -50,6 +50,15 @@ public class EditPersonVariant01 implements Visibled {
 
     private Person person;
 
+    public  EditPersonVariant01(Visibled afterView, Person person){
+
+        this(afterView);
+        setPerson(person);
+        setInfo(person);
+
+        btnVerify.setEnabled(false);
+
+    }
     public EditPersonVariant01(Visibled afterView){
         initialize();
 
@@ -340,6 +349,7 @@ public class EditPersonVariant01 implements Visibled {
                 // Format the Date object into the desired output format
                 String outputDate = outputDateFormat.format(date);
 
+                textFieldCPF2.setText(person.getCpf());
                 textFieldName.setText(person.getName());
                 textFieldEmail.setText(person.getEmail());
                 textFieldSocialName.setText(person.getSocialName());
