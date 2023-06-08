@@ -97,6 +97,7 @@ public class Login implements Visibled {
 
         iconApp.setBackground(Color.decode("#49A3F2"));
 
+        btnLogin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         this.jFrame.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {

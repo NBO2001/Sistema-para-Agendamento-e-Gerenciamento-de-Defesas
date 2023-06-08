@@ -10,6 +10,7 @@ import view.editPerson.EditPersonVariant01;
 import view.home.Home;
 import view.modals.ModalViewDefense;
 import view.relatorios.Reports;
+import view.tools.ConteinerPanelAndTxt;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -212,40 +213,62 @@ public class GerenciarCadastros implements Visibled {
         jPanel.setLayout(layout);
         layout.setAutoCreateGaps(true);
 
-        JPanel jPanel1;
+        ConteinerPanelAndTxt jPanel1;
         if( person.getSocialName() == null || person.getSocialName().length() == 0){
             jPanel1 = Home.createCellElement(person.getName(), color);
         }else{
             jPanel1 = Home.createCellElement(person.getSocialName(), color);
         }
 
-
-        JPanel jPanel2 = Home.createCellElement(person.getCpf(), color);
-        JPanel jPanel3 = Home.createCellElement(person.getEmail(), color);
-        JPanel jPanel4 = Home.createCellElement(Defense.dateToString(person.getBirthday()), color);
-        JPanel jPanel5 = Home.createCellElement(person.getPhoneNumber(), color);
+        ConteinerPanelAndTxt jPanel2 = Home.createCellElement(person.getCpf(), color);
+        ConteinerPanelAndTxt jPanel3 = Home.createCellElement(person.getEmail(), color);
+        ConteinerPanelAndTxt jPanel4 = Home.createCellElement(Defense.dateToString(person.getBirthday()), color);
+        ConteinerPanelAndTxt jPanel5 = Home.createCellElement(person.getPhoneNumber(), color);
         JPanel jPanel6 = createCellButton("Viee detalhes", color, person);
 
         jPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 jPanel.setBackground(Color.decode(secondColor)); // Set the hover color
-                jPanel1.setBackground(Color.decode(secondColor));
-                jPanel2.setBackground(Color.decode(secondColor));
-                jPanel3.setBackground(Color.decode(secondColor));
-                jPanel4.setBackground(Color.decode(secondColor));
-                jPanel5.setBackground(Color.decode(secondColor));
+                jPanel1.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel2.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel3.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel4.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel5.jTextArea.setBackground(Color.decode(secondColor));
                 jPanel6.setBackground(Color.decode(secondColor));
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
                 jPanel.setBackground(Color.decode(color)); // Set the original color when the mouse exits
-                jPanel1.setBackground(Color.decode(color));
-                jPanel2.setBackground(Color.decode(color));
-                jPanel3.setBackground(Color.decode(color));
-                jPanel4.setBackground(Color.decode(color));
-                jPanel5.setBackground(Color.decode(color));
+                jPanel1.jTextArea.setBackground(Color.decode(color));
+                jPanel2.jTextArea.setBackground(Color.decode(color));
+                jPanel3.jTextArea.setBackground(Color.decode(color));
+                jPanel4.jTextArea.setBackground(Color.decode(color));
+                jPanel5.jTextArea.setBackground(Color.decode(color));
+                jPanel6.setBackground(Color.decode(color));
+            }
+        });
+        jPanel1.jTextArea.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                jPanel.setBackground(Color.decode(secondColor)); // Set the hover color
+                jPanel1.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel2.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel3.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel4.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel5.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel6.setBackground(Color.decode(secondColor));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                jPanel.setBackground(Color.decode(color)); // Set the original color when the mouse exits
+                jPanel1.jTextArea.setBackground(Color.decode(color));
+                jPanel2.jTextArea.setBackground(Color.decode(color));
+                jPanel3.jTextArea.setBackground(Color.decode(color));
+                jPanel4.jTextArea.setBackground(Color.decode(color));
+                jPanel5.jTextArea.setBackground(Color.decode(color));
                 jPanel6.setBackground(Color.decode(color));
             }
         });
@@ -255,11 +278,11 @@ public class GerenciarCadastros implements Visibled {
         layout.setHorizontalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                                .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jPanel3, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jPanel4, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jPanel5, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel1.jPanel, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel2.jPanel, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel3.jPanel, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel4.jPanel, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel5.jPanel, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jPanel6, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
                         )
         );
@@ -267,11 +290,11 @@ public class GerenciarCadastros implements Visibled {
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jPanel3, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jPanel4, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jPanel5, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel1.jPanel, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel2.jPanel, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel3.jPanel, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel4.jPanel, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jPanel5.jPanel, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jPanel6, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
                         )
         );

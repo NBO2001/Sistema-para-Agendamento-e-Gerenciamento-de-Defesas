@@ -90,7 +90,11 @@ public class Person {
     }
 
     public void setCpf(String cpf) {
-        this.cpf = cpf;
+
+        String cleanedCpf = cpf.replaceAll("[.-]", "");
+
+        this.cpf = cleanedCpf;
+
     }
 
     public String getRg() {
