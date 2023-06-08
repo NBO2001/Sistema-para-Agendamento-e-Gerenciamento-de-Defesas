@@ -9,6 +9,7 @@ import view.cadastrousuario.CadastroUsuario;
 import view.editPerson.EditPersonVariant01;
 import view.home.Home;
 import view.modals.ModalViewDefense;
+import view.relatorios.Reports;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -31,6 +32,7 @@ public class GerenciarCadastros implements Visibled {
     private JButton btnAlterCad;
     private JPanel jPanelMain;
     private JButton btnHome;
+    private JButton btnBack;
     private Visibled afterView;
     private JPanel jPanelTable;
 
@@ -49,6 +51,21 @@ public class GerenciarCadastros implements Visibled {
         this.jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.jFrame.setMinimumSize(new Dimension(800,900));
 
+        btnBack.setSize(80,80);
+        btnBack.setOpaque(false);
+        btnBack.setContentAreaFilled(false);
+        btnBack.setBorderPainted(false);
+        btnBack.setFocusPainted(false);
+
+        btnBack.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if(afterView != null) afterView.setVisible(true);
+                GerenciarCadastros.this.destroy();
+            }
+        });
+
         btnMenu.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -58,14 +75,35 @@ public class GerenciarCadastros implements Visibled {
         });
         btnHome.addMouseListener(new MouseAdapter() {
             @Override
+            public void mouseEntered(MouseEvent e) {
+                btnHome.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                btnHome.setBackground(Color.decode("#80D1E8")); // Change button color on mouse enter
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnHome.setCursor(Cursor.getDefaultCursor());
+                btnHome.setBackground(Color.decode("#9ACFFF")); // Change button color on mouse exit
+            }
+            @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                if(afterView!=null) afterView.setVisible(true);
-                GerenciarCadastros.this.setVisible(false);
+                new Home().setVisible(true);
+                GerenciarCadastros.this.destroy();
             }
         });
 
+
         btnCadStu.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnCadStu.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                btnCadStu.setBackground(Color.decode("#80D1E8")); // Change button color on mouse enter
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnCadStu.setCursor(Cursor.getDefaultCursor());
+                btnCadStu.setBackground(Color.decode("#9ACFFF")); // Change button color on mouse exit
+            }
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
@@ -154,6 +192,11 @@ public class GerenciarCadastros implements Visibled {
         jFrame.add(panel1);
 
     }
+
+    public void destroy() {
+        this.jFrame.dispose();
+    }
+
     @Override
     public void setVisible(boolean value) {
 
@@ -170,7 +213,7 @@ public class GerenciarCadastros implements Visibled {
         layout.setAutoCreateGaps(true);
 
         JPanel jPanel1;
-        if(person.getSocialName().length() == 0){
+        if( person.getSocialName() == null || person.getSocialName().length() == 0){
             jPanel1 = Home.createCellElement(person.getName(), color);
         }else{
             jPanel1 = Home.createCellElement(person.getSocialName(), color);
@@ -286,8 +329,6 @@ public class GerenciarCadastros implements Visibled {
         querryPerson = containerQuery("Buscar nome: ");
 
         jPanelTable = tableCreate();
-
-//        jPanelTable.add(Home.headTable());
 
         JScrollPane scrollPane = new JScrollPane(jPanelTable);
         scrollPane.setBorder(null); // Remove the color border

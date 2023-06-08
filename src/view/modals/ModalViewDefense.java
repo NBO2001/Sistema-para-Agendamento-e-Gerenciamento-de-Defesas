@@ -32,6 +32,7 @@ public class ModalViewDefense implements Visibled {
     private LabelAndTitleContainer observation;
     private CheckBoxAndTitleContainer statusDefense;
     private JButton alterComponents;
+    private JButton certificatePrint;
     private JButton closeWindow;
     private JButton deleteDefense;
     private JButton updateDefense;
@@ -302,10 +303,43 @@ public class ModalViewDefense implements Visibled {
                 updateDefense.setVisible(true);
                 closeUpdate.setVisible(true);
                 alterComponents.setVisible(false);
+                certificatePrint.setVisible(false);
                 closeWindow.setVisible(false);
 
             }
         });
+
+        certificatePrint = new JButton("Certificado");
+        certificatePrint.setFont(new Font("Ubuntu", Font.PLAIN, 18));
+        certificatePrint.setBackground(Color.decode("#E8940C"));
+        certificatePrint.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+        certificatePrint.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                certificatePrint.setBackground(Color.decode("#FF4E00")); // Change button color on mouse enter
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                certificatePrint.setBackground(Color.decode("#E8940C")); // Change button color on mouse exit
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+
+                new Certificate(ModalViewDefense.this.getDefense()).printed();
+
+            }
+        });
+
+        if(defense != null && defense.getStatus() == 1){
+            certificatePrint.setVisible(true);
+        }else{
+            certificatePrint.setVisible(false);
+        }
+
 
         closeWindow = new JButton("Fechar");
         closeWindow.setFont(new Font("Ubuntu", Font.PLAIN, 18));
@@ -426,6 +460,7 @@ public class ModalViewDefense implements Visibled {
                 layout.createSequentialGroup()
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(alterComponents, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(certificatePrint, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
                         .addComponent(closeWindow, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
                         .addComponent(deleteDefense, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
                         .addComponent(updateDefense, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
@@ -436,6 +471,7 @@ public class ModalViewDefense implements Visibled {
         layout.setVerticalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                         .addComponent(alterComponents, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(certificatePrint, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
                         .addComponent(closeWindow, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
                         .addComponent(deleteDefense, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
                         .addComponent(updateDefense, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
@@ -464,6 +500,13 @@ public class ModalViewDefense implements Visibled {
         statusDefense.jCheckBox.setEnabled(false);
 
         alterComponents.setVisible(true);
+
+        if(defense != null && defense.getStatus() == 1){
+            certificatePrint.setVisible(true);
+        }else{
+            certificatePrint.setVisible(false);
+        }
+
         closeWindow.setVisible(true);
 
         updateDefense.setVisible(false);

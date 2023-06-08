@@ -147,4 +147,31 @@ public class Person {
     public void setPersonId(int personId) {
         this.personId = personId;
     }
+
+    public boolean isValidValues(){
+
+        if(!Utils.isValidCpf(this.getCpf())){
+            System.out.println("Cpf é null");
+            return false;
+        }
+        else if ( this.getName() == null || !(this.getName().length() >= 2)){
+            System.out.println("Name is null");
+            return false;
+        }
+        else if (this.getBirthday() == null){
+            System.out.println("Birdday is null");
+            return false;
+        }
+        else if (!(Utils.isValidEmail(this.getEmail()))){
+            System.out.println("Email is null");
+            return false;
+        }
+        else if (this.getRg() == null){
+            System.out.println("Rg is null");
+            return false;
+        }
+
+        return true;
+
+    }
 }

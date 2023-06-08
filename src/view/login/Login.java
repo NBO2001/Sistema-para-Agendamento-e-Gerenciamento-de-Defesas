@@ -9,8 +9,7 @@ import view.home.Home;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.geom.RoundRectangle2D;
 import java.util.Arrays;
 
@@ -51,28 +50,33 @@ public class Login implements Visibled {
 
                 super.mouseClicked(e);
 
-                if((textFieldUsername.getText().length() == 0) || (new String(passwordField1.getPassword()).length() == 0 ) ){
-
-                    JOptionPane.showMessageDialog(null, "Please type your username and password.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                String userName = Utils.encryptTolkienName(textFieldUsername.getText());
-
-                // Modificar depois, se der tempo, adicionar seguranca nisso.
-                String password = Utils.encryptTolkienName(new String(passwordField1.getPassword()));
-
-
-                if(Authentication.authenticate(userName, password,Login.this, new Home(), controllingManager )){
-                    setVisible(false);
-                }else{
-                    JOptionPane.showMessageDialog(null, "Invalid username or password. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
+                loginExe();
 
             }
         });
 
     }
+
+    private void loginExe() {
+        if((textFieldUsername.getText().length() == 0) || (new String(passwordField1.getPassword()).length() == 0 ) ){
+
+            JOptionPane.showMessageDialog(null, "Please type your username and password.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        String userName = Utils.encryptTolkienName(textFieldUsername.getText());
+
+        // Modificar depois, se der tempo, adicionar seguranca nisso.
+        String password = Utils.encryptTolkienName(new String(passwordField1.getPassword()));
+
+
+        if(Authentication.authenticate(userName, password,Login.this, new Home(), controllingManager )){
+            setVisible(false);
+        }else{
+            JOptionPane.showMessageDialog(null, "Invalid username or password. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     public Login(){
         this(null);
     }
@@ -81,16 +85,44 @@ public class Login implements Visibled {
         this.jFrame = new JFrame("Login");
 
         this.jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.jFrame.setMinimumSize(new Dimension(500,600));
+        this.jFrame.setMinimumSize(new Dimension(400,600));
         this.jFrame.setPreferredSize(new Dimension(800,800));
         this.jFrame.setLocationRelativeTo(null);
-
 
         textFieldUsername.setFont(new Font("Ubuntu", Font.PLAIN, 20));
         textFieldUsername.setBorder(new EmptyBorder(5, 5, 5,5));
 
         passwordField1.setFont(new Font("Ubuntu", Font.PLAIN, 20));
         passwordField1.setBorder(new EmptyBorder(5, 5, 5,5));
+
+        iconApp.setBackground(Color.decode("#49A3F2"));
+
+        this.jFrame.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                int width = jFrame.getWidth();
+
+                if (width < 401) {
+                    iconApp.setVisible(false);
+                } else {
+                    iconApp.setVisible(true);
+                }
+            }
+        });
+
+        textFieldUsername.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                passwordField1.requestFocusInWindow();
+            }
+        });
+
+        passwordField1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loginExe();
+            }
+        });
 
         this.jFrame.add(panel1);
 
