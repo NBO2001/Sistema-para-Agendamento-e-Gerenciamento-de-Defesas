@@ -145,9 +145,16 @@ public class StudentManager extends ConnectionBase{
 
     public static boolean delete(Person student){
 
+        Student student1 = (Student) student;
+
+        DefenseManager defenseManager = new DefenseManager();
+
+        ArrayList<Defense> defenses =  defenseManager.selectAll(student1.getStudentId(),0);
+
+        if(defenses.size() != 0) return false;
+
         String sql = "DELETE FROM students WHERE student_id = ?";
 
-        Student student1 = (Student) student;
 
         try{
             PreparedStatement stmt = conexao.prepareStatement(sql);

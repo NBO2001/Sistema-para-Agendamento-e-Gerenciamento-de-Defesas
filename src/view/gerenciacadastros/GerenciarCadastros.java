@@ -9,6 +9,7 @@ import view.cadastrousuario.CadastroUsuario;
 import view.editPerson.EditPersonVariant01;
 import view.home.Home;
 import view.modals.ModalViewDefense;
+import view.modals.ModalViewPerson;
 import view.relatorios.Reports;
 import view.tools.ConteinerPanelAndTxt;
 
@@ -30,7 +31,6 @@ public class GerenciarCadastros implements Visibled {
     private JButton btnCadStu;
     private JButton btnCadTeac;
     private JButton btnCadUser;
-    private JButton btnAlterCad;
     private JPanel jPanelMain;
     private JButton btnHome;
     private JButton btnBack;
@@ -57,6 +57,7 @@ public class GerenciarCadastros implements Visibled {
         btnBack.setContentAreaFilled(false);
         btnBack.setBorderPainted(false);
         btnBack.setFocusPainted(false);
+        btnBack.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         btnBack.addMouseListener(new MouseAdapter() {
             @Override
@@ -67,6 +68,8 @@ public class GerenciarCadastros implements Visibled {
             }
         });
 
+        btnMenu.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
         btnMenu.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -74,6 +77,7 @@ public class GerenciarCadastros implements Visibled {
                 jPanelMenu.setVisible(!jPanelMenu.isVisible());
             }
         });
+        btnHome.setFont(new Font("Ubuntu", Font.PLAIN, 20));
         btnHome.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -93,7 +97,7 @@ public class GerenciarCadastros implements Visibled {
             }
         });
 
-
+        btnCadStu.setFont(new Font("Ubuntu", Font.PLAIN, 20));
         btnCadStu.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -112,7 +116,18 @@ public class GerenciarCadastros implements Visibled {
                 GerenciarCadastros.this.setVisible(false);
             }
         });
+        btnCadTeac.setFont(new Font("Ubuntu", Font.PLAIN, 20));
         btnCadTeac.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnCadTeac.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                btnCadTeac.setBackground(Color.decode("#80D1E8")); // Change button color on mouse enter
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnCadTeac.setCursor(Cursor.getDefaultCursor());
+                btnCadTeac.setBackground(Color.decode("#9ACFFF")); // Change button color on mouse exit
+            }
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
@@ -120,22 +135,28 @@ public class GerenciarCadastros implements Visibled {
                 GerenciarCadastros.this.setVisible(false);
             }
         });
+        btnCadUser.setFont(new Font("Ubuntu", Font.PLAIN, 20));
         btnCadUser.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnCadUser.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                btnCadUser.setBackground(Color.decode("#80D1E8")); // Change button color on mouse enter
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnCadUser.setCursor(Cursor.getDefaultCursor());
+                btnCadUser.setBackground(Color.decode("#9ACFFF")); // Change button color on mouse exit
+            }
             @Override
             public void mouseClicked(MouseEvent e) {
+
                 super.mouseClicked(e);
                 new Cadastro(GerenciarCadastros.this, new CadastroUsuario(GerenciarCadastros.this)).setVisible(true);
                 GerenciarCadastros.this.setVisible(false);
             }
         });
-        btnAlterCad.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                new EditPersonVariant01(GerenciarCadastros.this).setVisible(true);
-                GerenciarCadastros.this.setVisible(false);
-            }
-        });
+
 
         ArrayList<Person> people = People.selectAll();
 
@@ -194,6 +215,25 @@ public class GerenciarCadastros implements Visibled {
 
     }
 
+    private void updateContent(){
+        GerenciarCadastros.this.clening();
+
+        Boolean color = true;
+
+        for(Person person: People.selectAll(querryPerson.jTextField.getText())){
+
+            if(color){
+                jPanelTable.add(rowTableCreate(person, "#F1F1F1", "#D3E2EB" ));
+            }else{
+                jPanelTable.add(rowTableCreate(person, "#EAEAEA", "#D3E2EB"));
+            }
+
+            color = !color;
+        }
+
+        jFrame.revalidate();
+        jFrame.repaint();
+    }
     public void destroy() {
         this.jFrame.dispose();
     }
@@ -202,6 +242,8 @@ public class GerenciarCadastros implements Visibled {
     public void setVisible(boolean value) {
 
         if(value) jPanelMenu.setVisible(false);
+
+        if(value) updateContent();
 
         jFrame.setVisible(value);
     }
@@ -224,7 +266,7 @@ public class GerenciarCadastros implements Visibled {
         ConteinerPanelAndTxt jPanel3 = Home.createCellElement(person.getEmail(), color);
         ConteinerPanelAndTxt jPanel4 = Home.createCellElement(Defense.dateToString(person.getBirthday()), color);
         ConteinerPanelAndTxt jPanel5 = Home.createCellElement(person.getPhoneNumber(), color);
-        JPanel jPanel6 = createCellButton("Viee detalhes", color, person);
+        JPanel jPanel6 = createCellButton("View detalhes", color, person);
 
         jPanel.addMouseListener(new MouseAdapter() {
             @Override
@@ -250,6 +292,99 @@ public class GerenciarCadastros implements Visibled {
             }
         });
         jPanel1.jTextArea.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                jPanel.setBackground(Color.decode(secondColor)); // Set the hover color
+                jPanel1.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel2.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel3.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel4.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel5.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel6.setBackground(Color.decode(secondColor));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                jPanel.setBackground(Color.decode(color)); // Set the original color when the mouse exits
+                jPanel1.jTextArea.setBackground(Color.decode(color));
+                jPanel2.jTextArea.setBackground(Color.decode(color));
+                jPanel3.jTextArea.setBackground(Color.decode(color));
+                jPanel4.jTextArea.setBackground(Color.decode(color));
+                jPanel5.jTextArea.setBackground(Color.decode(color));
+                jPanel6.setBackground(Color.decode(color));
+            }
+        });
+
+        jPanel2.jTextArea.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                jPanel.setBackground(Color.decode(secondColor)); // Set the hover color
+                jPanel1.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel2.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel3.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel4.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel5.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel6.setBackground(Color.decode(secondColor));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                jPanel.setBackground(Color.decode(color)); // Set the original color when the mouse exits
+                jPanel1.jTextArea.setBackground(Color.decode(color));
+                jPanel2.jTextArea.setBackground(Color.decode(color));
+                jPanel3.jTextArea.setBackground(Color.decode(color));
+                jPanel4.jTextArea.setBackground(Color.decode(color));
+                jPanel5.jTextArea.setBackground(Color.decode(color));
+                jPanel6.setBackground(Color.decode(color));
+            }
+        });
+        jPanel3.jTextArea.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                jPanel.setBackground(Color.decode(secondColor)); // Set the hover color
+                jPanel1.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel2.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel3.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel4.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel5.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel6.setBackground(Color.decode(secondColor));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                jPanel.setBackground(Color.decode(color)); // Set the original color when the mouse exits
+                jPanel1.jTextArea.setBackground(Color.decode(color));
+                jPanel2.jTextArea.setBackground(Color.decode(color));
+                jPanel3.jTextArea.setBackground(Color.decode(color));
+                jPanel4.jTextArea.setBackground(Color.decode(color));
+                jPanel5.jTextArea.setBackground(Color.decode(color));
+                jPanel6.setBackground(Color.decode(color));
+            }
+        });
+        jPanel4.jTextArea.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                jPanel.setBackground(Color.decode(secondColor)); // Set the hover color
+                jPanel1.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel2.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel3.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel4.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel5.jTextArea.setBackground(Color.decode(secondColor));
+                jPanel6.setBackground(Color.decode(secondColor));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                jPanel.setBackground(Color.decode(color)); // Set the original color when the mouse exits
+                jPanel1.jTextArea.setBackground(Color.decode(color));
+                jPanel2.jTextArea.setBackground(Color.decode(color));
+                jPanel3.jTextArea.setBackground(Color.decode(color));
+                jPanel4.jTextArea.setBackground(Color.decode(color));
+                jPanel5.jTextArea.setBackground(Color.decode(color));
+                jPanel6.setBackground(Color.decode(color));
+            }
+        });
+        jPanel5.jTextArea.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 jPanel.setBackground(Color.decode(secondColor)); // Set the hover color
@@ -314,15 +449,16 @@ public class GerenciarCadastros implements Visibled {
     }
     public JPanel createCellButton(String title, String color, Person person){
 
-        JPanel conteinnerTitle = new JPanel();
-        conteinnerTitle.setPreferredSize(new Dimension(300,50));
-        conteinnerTitle.setBackground(Color.decode(color));
+        JPanel containerTitle = new JPanel();
+        containerTitle.setPreferredSize(new Dimension(300,50));
+        containerTitle.setBackground(Color.decode(color));
 
         JButton jButton = new JButton();
         jButton.setPreferredSize(new Dimension(50,50));
         jButton.setBackground(Color.decode(color));
         jButton.setBorder(new EmptyBorder(5, 5, 5, 5));
         jButton.setToolTipText(title);
+        jButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         // Mudar depois
         String imagePath = ConstatesPath.PATH + "/src/imgs/search_30x30.jpg";
@@ -333,8 +469,8 @@ public class GerenciarCadastros implements Visibled {
 
         actionCreate(jButton, person);
 
-        conteinnerTitle.add(jButton);
-        return conteinnerTitle;
+        containerTitle.add(jButton);
+        return containerTitle;
     }
 
     private void createUIComponents() {
@@ -430,8 +566,9 @@ public class GerenciarCadastros implements Visibled {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                new EditPersonVariant01(GerenciarCadastros.this, person).setVisible(true);
-                GerenciarCadastros.this.setVisible(false);
+//                new EditPersonVariant01(GerenciarCadastros.this, person).setVisible(true);
+//                GerenciarCadastros.this.setVisible(false);
+                new ModalViewPerson(GerenciarCadastros.this,person).setVisible(true);
             }
         });
 

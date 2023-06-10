@@ -3,8 +3,10 @@ package view.cadastroprofessor;
 import interfaces.VisiblePersonified;
 import interfaces.Visibled;
 import model.*;
+import view.gerenciacadastros.GerenciarCadastros;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -12,14 +14,7 @@ public class CadastroProfessor implements VisiblePersonified {
 
     private JFrame jFrame;
     private JPanel panel1;
-    private JPanel jPanelMenu;
-    private JButton btnMenu;
     private JButton btnHome;
-    private JButton btnCadStu;
-    private JButton btnCadUser;
-    private JButton btnCadDefense;
-    private JButton btnAlterCad;
-    private JButton btnRelatorio;
     private JPanel jPanelHome;
     private JTextField textFieldCPF2;
     private JPanel jPanelForm;
@@ -29,6 +24,7 @@ public class CadastroProfessor implements VisiblePersonified {
     private JTextField textFieldEmail;
     private JButton btnNext;
     private JPanel panelOption;
+    private JButton btnBack;
     private JTextField fieldRG;
     private JTextField fieldPhone;
 
@@ -36,14 +32,23 @@ public class CadastroProfessor implements VisiblePersonified {
 
     public CadastroProfessor(Visibled afterView){
         initialize();
-        btnMenu.addMouseListener(new MouseAdapter() {
+
+        btnBack.setSize(80,80);
+        btnBack.setOpaque(false);
+        btnBack.setContentAreaFilled(false);
+        btnBack.setBorderPainted(false);
+        btnBack.setFocusPainted(false);
+        btnBack.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        btnBack.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                jPanelMenu.setVisible(!jPanelMenu.isVisible());
-
+                if(afterView != null) afterView.setVisible(true);
+                CadastroProfessor.this.destroy();
             }
         });
+
 
         btnNext.addMouseListener(new MouseAdapter() {
             @Override
@@ -76,16 +81,11 @@ public class CadastroProfessor implements VisiblePersonified {
 
             }
         });
-        btnHome.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                if( afterView != null ){
-                    afterView.setVisible(true);
-                    CadastroProfessor.this.setVisible(false);
-                }
-            }
-        });
+
+    }
+
+    private void destroy() {
+        this.jFrame.dispose();
     }
 
     private void initialize(){
@@ -101,10 +101,6 @@ public class CadastroProfessor implements VisiblePersonified {
         this.jFrame.add(panel1);
     }
 
-    public void setVisible(boolean value){
-        jPanelMenu.setVisible(false);
-        this.jFrame.setVisible(value);
-    }
 
 
     @Override
@@ -118,5 +114,10 @@ public class CadastroProfessor implements VisiblePersonified {
 
     public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
+    }
+
+    @Override
+    public void setVisible(boolean value) {
+        this.jFrame.setVisible(value);
     }
 }

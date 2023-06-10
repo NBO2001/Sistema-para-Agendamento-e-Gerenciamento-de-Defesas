@@ -5,6 +5,7 @@ import interfaces.Visibled;
 import model.Person;
 import model.Student;
 import model.StudentManager;
+import view.cadastro.Cadastro;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -14,34 +15,34 @@ public class CadastroAluno implements VisiblePersonified {
 
     private JFrame jFrame;
     private JPanel panel1;
-    private JButton btnMenu;
-    private JPanel jPanelMenu;
-    private JButton btnHome;
-    private JButton btnCadTeac;
-    private JButton btnCadUser;
-    private JButton btnCadDefense;
-    private JButton btnAlterCad;
-    private JButton btnRelatorio;
     private JPanel jPanelHome;
     private JButton btnNext;
     private JPanel jPanelForm;
     private JTextField textFieldMatricula;
     private JPanel panelOption;
     private JComboBox boxTypeStudent;
+    private JButton btnBack;
 
     private Student student;
 
     public CadastroAluno(Visibled afterView) {
         this.setStudent(null);
         initialize();
-        btnMenu.addMouseListener(new MouseAdapter() {
+
+        btnBack.setSize(80,80);
+        btnBack.setOpaque(false);
+        btnBack.setContentAreaFilled(false);
+        btnBack.setBorderPainted(false);
+
+        btnBack.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                jPanelMenu.setVisible(!jPanelMenu.isVisible());
-
+                if(afterView != null) afterView.setVisible(true);
+                CadastroAluno.this.destroy();
             }
         });
+
         btnNext.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -76,16 +77,11 @@ public class CadastroAluno implements VisiblePersonified {
             }
         });
 
-        btnHome.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                if( afterView != null ){
-                    afterView.setVisible(true);
-                    CadastroAluno.this.setVisible(false);
-                }
-            }
-        });
+
+    }
+
+    private void destroy() {
+        jFrame.dispose();
     }
 
     public CadastroAluno(){

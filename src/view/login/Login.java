@@ -3,7 +3,7 @@ package view.login;
 import controller.Authentication;
 import controller.ControllingManager;
 import interfaces.Visibled;
-import utils.Utils;
+import model.Utils;
 import view.home.Home;
 
 import javax.swing.*;

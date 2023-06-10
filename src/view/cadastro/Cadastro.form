@@ -37,7 +37,7 @@
                 </properties>
                 <border type="none"/>
                 <children>
-                  <grid id="281b5" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                  <grid id="281b5" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -47,20 +47,6 @@
                     </properties>
                     <border type="none"/>
                     <children>
-                      <component id="65e9c" class="javax.swing.JButton" binding="btnMenu">
-                        <constraints>
-                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                            <minimum-size width="50" height="50"/>
-                          </grid>
-                        </constraints>
-                        <properties>
-                          <background color="-11951118"/>
-                          <borderPainted value="false"/>
-                          <focusPainted value="false"/>
-                          <icon value="imgs/menu.png"/>
-                          <text value=""/>
-                        </properties>
-                      </component>
                       <hspacer id="2f4e">
                         <constraints>
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false">
@@ -116,7 +102,7 @@
                   </grid>
                 </children>
               </grid>
-              <grid id="f1e9c" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="f1e9c" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -126,134 +112,10 @@
                 </properties>
                 <border type="none"/>
                 <children>
-                  <grid id="e1662" binding="jPanelMenu" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                    <margin top="0" left="0" bottom="0" right="0"/>
-                    <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="8" fill="2" indent="0" use-parent-layout="false">
-                        <minimum-size width="347" height="-1"/>
-                      </grid>
-                    </constraints>
-                    <properties>
-                      <background color="-11951118"/>
-                      <visible value="true"/>
-                    </properties>
-                    <border type="none"/>
-                    <children>
-                      <grid id="4fb1b" layout-manager="GridLayoutManager" row-count="9" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                        <margin top="0" left="0" bottom="0" right="0"/>
-                        <constraints>
-                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
-                        </constraints>
-                        <properties>
-                          <background color="-11951118"/>
-                        </properties>
-                        <border type="none"/>
-                        <children>
-                          <component id="9ed8d" class="javax.swing.JButton" binding="btnCadStu">
-                            <constraints>
-                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false">
-                                <minimum-size width="-1" height="100"/>
-                              </grid>
-                            </constraints>
-                            <properties>
-                              <background color="-6631425"/>
-                              <borderPainted value="false"/>
-                              <label value="Cadastrar Aluno"/>
-                              <text value="Cadastrar Aluno"/>
-                            </properties>
-                          </component>
-                          <component id="53b74" class="javax.swing.JButton" binding="btnCadTeac">
-                            <constraints>
-                              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false">
-                                <minimum-size width="-1" height="100"/>
-                              </grid>
-                            </constraints>
-                            <properties>
-                              <background color="-6631425"/>
-                              <borderPainted value="false"/>
-                              <label value="Cadastrar Professor"/>
-                              <text value="Cadastrar Professor"/>
-                            </properties>
-                          </component>
-                          <component id="a821d" class="javax.swing.JButton" binding="btnCadUser">
-                            <constraints>
-                              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false">
-                                <minimum-size width="-1" height="100"/>
-                              </grid>
-                            </constraints>
-                            <properties>
-                              <background color="-6631425"/>
-                              <borderPainted value="false"/>
-                              <label value="Cadastrar Usuário"/>
-                              <text value="Cadastrar Usuário"/>
-                            </properties>
-                          </component>
-                          <component id="861a2" class="javax.swing.JButton" binding="btnCadDefense">
-                            <constraints>
-                              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false">
-                                <minimum-size width="-1" height="100"/>
-                              </grid>
-                            </constraints>
-                            <properties>
-                              <background color="-6631425"/>
-                              <borderPainted value="false"/>
-                              <label value="Cadastrar Defesa"/>
-                              <text value="Cadastrar Defesa"/>
-                            </properties>
-                          </component>
-                          <component id="f97be" class="javax.swing.JButton" binding="btnAlterCad">
-                            <constraints>
-                              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false">
-                                <minimum-size width="-1" height="100"/>
-                              </grid>
-                            </constraints>
-                            <properties>
-                              <background color="-6631425"/>
-                              <borderPainted value="false"/>
-                              <label value="Alterar Cadastro"/>
-                              <text value="Alterar Cadastro"/>
-                            </properties>
-                          </component>
-                          <vspacer id="7674e">
-                            <constraints>
-                              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
-                                <minimum-size width="-1" height="30"/>
-                                <maximum-size width="-1" height="30"/>
-                              </grid>
-                            </constraints>
-                          </vspacer>
-                          <vspacer id="cef15">
-                            <constraints>
-                              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
-                                <minimum-size width="-1" height="30"/>
-                                <maximum-size width="-1" height="30"/>
-                              </grid>
-                            </constraints>
-                          </vspacer>
-                          <vspacer id="e3ecc">
-                            <constraints>
-                              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
-                                <minimum-size width="-1" height="30"/>
-                                <maximum-size width="-1" height="30"/>
-                              </grid>
-                            </constraints>
-                          </vspacer>
-                          <vspacer id="fc609">
-                            <constraints>
-                              <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
-                                <minimum-size width="-1" height="30"/>
-                                <maximum-size width="-1" height="30"/>
-                              </grid>
-                            </constraints>
-                          </vspacer>
-                        </children>
-                      </grid>
-                    </children>
-                  </grid>
                   <grid id="e64c7" binding="jPanelHome" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
-                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties/>
                     <border type="none"/>

@@ -270,4 +270,29 @@ public class People extends ConnectionBase {
         }
     }
 
+    public static boolean delete(Person person1){
+
+        ArrayList<Student> students = StudentManager.selectAll(person1.getPersonId());
+        ArrayList<Teacher> teachers = TeacherManager.selectAll(person1.getPersonId());
+
+        if(students.size() != 0 || teachers.size() != 0) return false;
+
+        String sql = "DELETE FROM people WHERE personId = ?";
+
+        try{
+            PreparedStatement stmt = conexao.prepareStatement(sql);
+
+            stmt.setInt(1, person1.getPersonId() );
+
+            int rowsAffected = stmt.executeUpdate();
+
+            return rowsAffected != 0;
+
+        } catch (SQLException e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+
+
 }

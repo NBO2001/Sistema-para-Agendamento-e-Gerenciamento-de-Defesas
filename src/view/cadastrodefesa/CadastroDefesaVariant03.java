@@ -3,6 +3,7 @@ package view.cadastrodefesa;
 import interfaces.Visibled;
 import model.Defense;
 import model.Teacher;
+import model.Utils;
 import view.cadastroaluno.CadastroAluno;
 
 import javax.swing.*;
@@ -12,14 +13,6 @@ import java.awt.event.MouseEvent;
 public class CadastroDefesaVariant03 implements Visibled {
     private  JFrame jFrame;
     private JPanel panel1;
-    private JButton btnMenu;
-    private JPanel jPanelMenu;
-    private JButton btnCadStu;
-    private JButton btnCadTeac;
-    private JButton btnCadUser;
-    private JButton btnCadDefense;
-    private JButton btnAlterCad;
-    private JButton btnRelatorio;
     private JPanel jPanelHome;
     private JButton btnNext;
     private JPanel jPanelForm;
@@ -32,6 +25,8 @@ public class CadastroDefesaVariant03 implements Visibled {
     private JTextField textFieldTeach;
     private JComboBox typeDefense;
     private JPanel jPanelBottom;
+    private JButton btnBack;
+    private JTextField txtHour;
 
     private Defense defense;
 
@@ -40,12 +35,18 @@ public class CadastroDefesaVariant03 implements Visibled {
         initialize();
         this.setDefense(defense);
         this.setInfo();
-        btnMenu.addMouseListener(new MouseAdapter() {
+
+        btnBack.setSize(80,80);
+        btnBack.setOpaque(false);
+        btnBack.setContentAreaFilled(false);
+        btnBack.setBorderPainted(false);
+
+        btnBack.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                jPanelMenu.setVisible(!jPanelMenu.isVisible());
-
+                if(afterView != null) afterView.setVisible(true);
+                CadastroDefesaVariant03.this.destroy();
             }
         });
 
@@ -54,6 +55,20 @@ public class CadastroDefesaVariant03 implements Visibled {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
 
+                if(textFieldTitle.getText().trim().length() <= 2){
+                    JOptionPane.showMessageDialog(null, "Campo titulo vazio");
+                    return;
+                } else if (!Utils.isValidDate(textFieldDate.getText().trim())) {
+                    JOptionPane.showMessageDialog(null, "Data invalida");
+                    return;
+                } else if (textFieldLocal.getText().trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Campo local vazio");
+                    return;
+                }else if (!Utils.isValidTime(txtHour.getText().trim())) {
+                    JOptionPane.showMessageDialog(null, "Horario invalido");
+                    return;
+                }
+
                 Defense defense1 = CadastroDefesaVariant03.this.getDefense();
                 CadastroDefesaVariant03.AnyObject selectedObject = (CadastroDefesaVariant03.AnyObject) typeDefense.getSelectedItem();
                 int selectedValue = selectedObject.getValue();
@@ -61,7 +76,7 @@ public class CadastroDefesaVariant03 implements Visibled {
                 defense1.setLocal(textFieldLocal.getText());
                 defense1.setTypeDefense(selectedValue);
                 defense1.setDefenseTitle(textFieldTitle.getText());
-                defense1.setDate(textFieldDate.getText());
+                defense1.setDate(Utils.strToDateBrWithHour(textFieldDate.getText().trim()+" "+txtHour.getText().trim()));
 
                 new CadastroDefesaVariant04(afterView, defense1).setVisible(true);
                 CadastroDefesaVariant03.this.setVisible(false);
@@ -70,6 +85,10 @@ public class CadastroDefesaVariant03 implements Visibled {
 
             }
         });
+    }
+
+    private void destroy() {
+        jFrame.dispose();
     }
 
     private void initialize(){
@@ -87,6 +106,7 @@ public class CadastroDefesaVariant03 implements Visibled {
         this.textFieldStudent.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         this.textFieldTeach.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         this.typeDefense.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        this.txtHour.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         this.typeDefense.addItem(new CadastroDefesaVariant03.AnyObject(1, "Defesa de projeto final/TCC"));
         this.typeDefense.addItem(new CadastroDefesaVariant03.AnyObject(2, "Defesa de qualificação de mestrado"));
@@ -95,8 +115,6 @@ public class CadastroDefesaVariant03 implements Visibled {
         this.typeDefense.addItem(new CadastroDefesaVariant03.AnyObject(5, "Defesa de tese de doutorado"));
         this.typeDefense.addItem(new CadastroDefesaVariant03.AnyObject(6, "Defesa de artigo"));
 
-
-        this.jPanelMenu.setVisible(false);
 
         this.jFrame.add(panel1);
     }

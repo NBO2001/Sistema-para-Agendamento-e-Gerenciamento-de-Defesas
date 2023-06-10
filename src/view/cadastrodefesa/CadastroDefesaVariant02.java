@@ -2,6 +2,7 @@ package view.cadastrodefesa;
 
 import interfaces.Visibled;
 import model.*;
+import view.cadastro.Cadastro;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -10,14 +11,6 @@ import java.awt.event.MouseEvent;
 public class CadastroDefesaVariant02 implements Visibled {
     private JFrame jFrame;
     private JPanel panel1;
-    private JButton btnMenu;
-    private JPanel jPanelMenu;
-    private JButton btnCadStu;
-    private JButton btnCadTeac;
-    private JButton btnCadUser;
-    private JButton btnCadDefense;
-    private JButton btnAlterCad;
-    private JButton btnRelatorio;
     private JPanel jPanelHome;
     private JTextField textFieldCPFDoProfessor;
     private JButton btnVerify;
@@ -30,6 +23,7 @@ public class CadastroDefesaVariant02 implements Visibled {
     private JTextField textFieldNAmeTeach;
     private JTextField textFieldEmailTeach;
     private JPanel jPanelBottom;
+    private JButton btnBack;
 
     private Defense defense;
 
@@ -39,14 +33,21 @@ public class CadastroDefesaVariant02 implements Visibled {
         this.setDefense(defense);
         this.setInfoStudent(defense.getStudentDefending());
 
-        btnMenu.addMouseListener(new MouseAdapter() {
+        btnBack.setSize(80,80);
+        btnBack.setOpaque(false);
+        btnBack.setContentAreaFilled(false);
+        btnBack.setBorderPainted(false);
+
+        btnBack.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                jPanelMenu.setVisible(!jPanelMenu.isVisible());
-
+                if(afterView != null) afterView.setVisible(true);
+                CadastroDefesaVariant02.this.destroy();
             }
         });
+
+
         btnVerify.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -76,6 +77,11 @@ public class CadastroDefesaVariant02 implements Visibled {
             }
         });
     }
+
+    private void destroy() {
+        jFrame.dispose();
+    }
+
     private void initialize(){
 
         this.jFrame = new JFrame("Cadastro Defesa");
@@ -85,7 +91,6 @@ public class CadastroDefesaVariant02 implements Visibled {
 
         this.jPanelBottom.setVisible(false);
         this.jPanelForm.setVisible(false);
-        this.jPanelMenu.setVisible(false);
 
         // setBorder(BorderFactory.createLineBorder(Color.white));
         this.textFieldCPFDoProfessor.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));

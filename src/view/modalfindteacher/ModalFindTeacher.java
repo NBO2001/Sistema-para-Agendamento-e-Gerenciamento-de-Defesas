@@ -1,191 +1,606 @@
 package view.modalfindteacher;
 
 import interfaces.Visibled;
+import model.People;
+import model.Person;
 import model.Teacher;
 import model.TeacherManager;
 import view.cadastrodefesa.CadastroDefesaVariant04;
+import view.gerenciacadastros.GerenciarCadastros;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class ModalFindTeacher implements Visibled {
 
     private JFrame jFrame;
     private JPanel tablePanel;
 
-    private JButton btnSeach;
+    private JButton btnFinish;
     private JTextField txtSeach;
+    private JPanel boardOfTeacherSearch;
+    private JPanel boardOfTeacherSelected;
 
-    private Teacher teacher;
+
+    private ArrayList<Teacher> teachersSelected;
+    private ArrayList<Teacher> teachersOptions;
+
+    private String oldSeach;
 
     private CadastroDefesaVariant04 cadastroDefesaVariant04;
 
-    public ModalFindTeacher(String seach, CadastroDefesaVariant04 cadastroDefesaVariant04){
+    public ModalFindTeacher(String search, CadastroDefesaVariant04 cadastroDefesaVariant04, ArrayList<Teacher> teachersSelected){
+        this.teachersSelected = teachersSelected;
+
+
+        if(cadastroDefesaVariant04 != null){
+            this.cadastroDefesaVariant04 = cadastroDefesaVariant04;
+        }
+
+        if(search != null){
+            this.teachersOptions = TeacherManager.selectAll(search);
+            this.oldSeach = search;
+        }else{
+            this.teachersOptions = TeacherManager.selectAll("");
+        }
+
+        initialize();
+
+    }
+    public ModalFindTeacher(String search, CadastroDefesaVariant04 cadastroDefesaVariant04){
+        teachersSelected = new ArrayList<Teacher>();
         initialize();
 
         if(cadastroDefesaVariant04 != null){
             this.cadastroDefesaVariant04 = cadastroDefesaVariant04;
         }
 
-        if(seach != null){
-            txtSeach.setText(seach);
-            updateElements();
+        if(search != null){
+            this.teachersOptions = TeacherManager.selectAll(search);
+            this.oldSeach = search;
+        }else{
+            this.teachersOptions = TeacherManager.selectAll("");
         }
 
-        btnSeach.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                updateElements();
-
-            }
-        });
     }
     public ModalFindTeacher(){
-        this(null, null);
+        this(null, null, new ArrayList<Teacher>());
     }
 
     private void initialize(){
 
         jFrame = new JFrame();
-        jFrame.setSize(800, 800);
+        jFrame.setSize(1000, 900);
         jFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-
-        // First Panel
-        JPanel panel1 = new JPanel();
-        panel1.setPreferredSize(new Dimension(750, 100));
-        panel1.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-        txtSeach = new JTextField(10);
-        btnSeach = new JButton("Buscar");
-
-        panel1.add(txtSeach);
-        panel1.add(btnSeach);
-
-        // Second Panel
-        JPanel panel2 = new JPanel();
-        panel2.setPreferredSize(new Dimension(750, 500));
-        panel2.setLayout(new BorderLayout());
-
-        createTable();
-
-        JScrollPane scrollPane = new JScrollPane(tablePanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-
-        panel2.add(scrollPane, BorderLayout.CENTER);
-
-        // Third Panel
-        JPanel panel3 = new JPanel();
-        panel3.setPreferredSize(new Dimension(750, 100));
-        panel3.setLayout(new FlowLayout(FlowLayout.RIGHT));
-
-        JButton finishButton = new JButton("Finish");
-        panel3.add(finishButton);
+        jFrame.setLocationRelativeTo(null);
+        jFrame.setResizable(false);
 
         // Main Panel
         JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.add(panel1);
-        mainPanel.add(panel2);
-        mainPanel.add(panel3);
+        GroupLayout layout = new GroupLayout(mainPanel);
+        mainPanel.setLayout(layout);
+
+        JPanel header = headerCreate();
+
+        JPanel body = bodyCreate();
+
+        JPanel footer = footerCreate();
+
+
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(header, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(body, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(footer, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addComponent(header, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(body, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(footer, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+        );
 
         jFrame.add(mainPanel);
 
 
     }
 
-    private void createTable(){
-        tablePanel = new JPanel();
-        tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
-        tablePanel.add(createHead("Name", "Enrollment","Action"));
-    }
 
-    private void clening(){
-        for (Component component : tablePanel.getComponents()) {
-            tablePanel.remove(component);
-        }
-
-        tablePanel.add(createHead("Name", "Enrollment","Action"));
-
-    }
-    private static JPanel createHead(String nameLabelA, String enrollmentLabelA, String bottom) {
-        JPanel rowPanel = new JPanel();
-        rowPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-        JLabel nameLabel = new JLabel(nameLabelA);
-        JLabel enrollmentLabel = new JLabel(enrollmentLabelA);
-        JLabel actionLabel = new JLabel(bottom);
-
-        nameLabel.setPreferredSize(new Dimension(150, 50));
-        enrollmentLabel.setPreferredSize(new Dimension(150, 50));
-        actionLabel.setPreferredSize(new Dimension(150, 50));
-
-        rowPanel.add(nameLabel);
-        rowPanel.add(enrollmentLabel);
-        rowPanel.add(actionLabel);
-
-        return rowPanel;
-    }
-
-    private JPanel createTableRow(String name, String enrollment, Teacher teacher) {
-        JPanel rowPanel = new JPanel();
-        rowPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-        JLabel nameLabel = new JLabel(name);
-        nameLabel.setPreferredSize(new Dimension(150, 50));
-        JLabel enrollmentLabel = new JLabel(enrollment);
-        enrollmentLabel.setPreferredSize(new Dimension(150, 50));
-        JButton actionButton = new JButton("Add");
-        actionButton.putClientProperty("teacher", teacher);
-
-        actionButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                Teacher teacher = (Teacher) actionButton.getClientProperty("teacher");
-                cadastroDefesaVariant04.addBoardOfTeachers(teacher);
-                ModalFindTeacher.this.setTeacher(teacher);
-                ModalFindTeacher.this.setVisible(false);
-            }
-        });
-        actionButton.setPreferredSize(new Dimension(150, 50));
-
-        rowPanel.add(nameLabel);
-        rowPanel.add(enrollmentLabel);
-        rowPanel.add(actionButton);
-
-        return rowPanel;
-    }
     @Override
     public void setVisible(boolean value) {
         jFrame.setVisible(value);
     }
+    private JPanel headerCreate(){
 
-    private void addTeacher(Teacher teacher){
-        if(teacher != null){
-            tablePanel.add(createTableRow(teacher.getName(), teacher.getRegister(), teacher));
-            tablePanel.revalidate();
-            tablePanel.repaint();
+        JPanel jPanel = new JPanel();
+        GroupLayout layout = new GroupLayout(jPanel);
+        jPanel.setLayout(layout);
+
+        jPanel.setBackground(Color.decode("#0ABFBF"));
+        JLabel title = new JLabel("Teacher of Board");
+        title.setForeground(Color.decode("#ffffff"));
+        title.setFont(new Font("Ubuntu", Font.BOLD, 40));
+        title.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        boardOfTeacherSelected = createTableHead();
+        JScrollPane scrollPane = new JScrollPane(boardOfTeacherSelected);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(title, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addComponent(title, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+        );
+
+        return  jPanel;
+    }
+
+    private WrapperButton wrapperButtonGenerator(String label, String colorPanel, String colorButton) {
+        WrapperButton wrapperButton = new WrapperButton();
+
+        JPanel jPanel = new JPanel();
+        GroupLayout layout = new GroupLayout(jPanel);
+        jPanel.setLayout(layout);
+        jPanel.setBackground(Color.decode(colorPanel));
+
+        JButton btnAddTeacher = new JButton(label);
+        btnAddTeacher.setPreferredSize(new Dimension(100, 40));
+        btnAddTeacher.setBackground(Color.decode(colorButton));
+
+        btnAddTeacher.setBorder(new EmptyBorder(5,5,5,5));
+        btnAddTeacher.setFont(new Font("Ubuntu", Font.BOLD, 40));
+        btnAddTeacher.setForeground(Color.decode("#ffffff"));
+        btnAddTeacher.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btnAddTeacher, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+                                        .addGap(100)
+                        )
+
+        );
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                        .addComponent(btnAddTeacher, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+                        )
+
+        );
+
+
+        wrapperButton.jPanel = jPanel;
+        wrapperButton.jButton = btnAddTeacher;
+        return wrapperButton;
+    }
+
+    private JPanel rowComponentCreator(Teacher teacher, String color){
+        JPanel jPanel = new JPanel();
+        GroupLayout layout = new GroupLayout(jPanel);
+        jPanel.setLayout(layout);
+        jPanel.setBackground(Color.decode(color));
+
+        JTextArea nameTeacher = new JTextArea(teacher.getName());
+        nameTeacher.setBorder(new EmptyBorder(5,5,5,5));
+        nameTeacher.setFont(new Font("Ubuntu", Font.PLAIN, 20));
+        nameTeacher.setLineWrap(true);
+        nameTeacher.setWrapStyleWord(true);
+        nameTeacher.setEditable(false);
+        nameTeacher.setBackground(Color.decode(color));
+        nameTeacher.setBorder(null);
+
+        JTextArea matTeacher = new JTextArea(teacher.getRegister());
+        matTeacher.setBorder(new EmptyBorder(5,5,5,5));
+        matTeacher.setFont(new Font("Ubuntu", Font.PLAIN, 20));
+        matTeacher.setLineWrap(true);
+        matTeacher.setWrapStyleWord(true);
+        matTeacher.setEditable(false);
+        matTeacher.setBackground(Color.decode(color));
+        matTeacher.setBorder(null);
+
+        WrapperButton wrapperButton = wrapperButtonGenerator("+",color ,"#D7F205");
+        wrapperButton.jButton.setToolTipText("Adicionar Professor");
+        wrapperButton.jButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                updateAndInsert(teacher);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                wrapperButton.jButton.setBackground(Color.decode("#78DB07"));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+                wrapperButton.jButton.setBackground(Color.decode("#D7F205"));
+            }
+        });
+
+
+
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(nameTeacher, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(matTeacher, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(wrapperButton.jPanel, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                        )
+        );
+
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                        .addComponent(nameTeacher, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(matTeacher, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(wrapperButton.jPanel, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
+                        )
+        );
+
+
+
+        return jPanel;
+    }
+
+    private JPanel rowComponentCreatorHeard(Teacher teacher, String color){
+        JPanel jPanel = new JPanel();
+        GroupLayout layout = new GroupLayout(jPanel);
+        jPanel.setLayout(layout);
+        jPanel.setBackground(Color.decode(color));
+
+        JTextArea nameTeacher = new JTextArea(teacher.getName());
+        nameTeacher.setBorder(new EmptyBorder(5,5,5,5));
+        nameTeacher.setFont(new Font("Ubuntu", Font.PLAIN, 20));
+        nameTeacher.setLineWrap(true);
+        nameTeacher.setWrapStyleWord(true);
+        nameTeacher.setEditable(false);
+        nameTeacher.setBackground(Color.decode(color));
+        nameTeacher.setBorder(null);
+
+        JTextArea matTeacher = new JTextArea(teacher.getRegister());
+        matTeacher.setBorder(new EmptyBorder(5,5,5,5));
+        matTeacher.setFont(new Font("Ubuntu", Font.PLAIN, 20));
+        matTeacher.setLineWrap(true);
+        matTeacher.setWrapStyleWord(true);
+        matTeacher.setEditable(false);
+        matTeacher.setBackground(Color.decode(color));
+        matTeacher.setBorder(null);
+
+        WrapperButton wrapperButton = wrapperButtonGenerator("-",color ,"#D93A2B");
+        wrapperButton.jButton.setToolTipText("Remover Professor");
+        wrapperButton.jButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                updateAndRemove(teacher);
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                wrapperButton.jButton.setBackground(Color.decode("#F02450"));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+                wrapperButton.jButton.setBackground(Color.decode("#D93A2B"));
+            }
+        });
+
+
+
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(nameTeacher, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(matTeacher, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(wrapperButton.jPanel, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                        )
+        );
+
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                        .addComponent(nameTeacher, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(matTeacher, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(wrapperButton.jPanel, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
+                        )
+        );
+
+
+
+        return jPanel;
+    }
+
+    private void updateAndInsert(Teacher teacher) {
+
+        boolean updateIsNecessary = true;
+        for(Teacher teacher1: this.teachersSelected){
+            if(teacher1.getTeacherId() == teacher.getTeacherId()){
+                updateIsNecessary = false;
+                break;
+            }
         }
-    }
 
-    private void updateElements(){
-        clening();
-        ArrayList<Teacher> teachers = TeacherManager.selectAll(txtSeach.getText());
+        if(updateIsNecessary){
 
-        for(Teacher teacher: teachers){
-            addTeacher(teacher);
+            this.teachersSelected.add(teacher);
+
+            for(Component component: boardOfTeacherSelected.getComponents()) boardOfTeacherSelected.remove(component);
+
+            boolean flag = true;
+
+            for(Teacher teacher1: this.teachersSelected ){
+
+                if(flag){
+                    boardOfTeacherSelected.add(rowComponentCreatorHeard(teacher1, "#EFEFEF"));
+                }else{
+                    boardOfTeacherSelected.add(rowComponentCreatorHeard(teacher1, "#FFFFF7"));
+                }
+                flag = !flag;
+
+            }
+            boardOfTeacherSelected.revalidate();
+            boardOfTeacherSelected.repaint();
+
+
+
         }
+
     }
 
-    public Teacher getTeacher() {
-        return teacher;
+    private void updateAndRemove(Teacher teacher) {
+
+        Iterator<Teacher> iterator = this.teachersSelected.iterator();
+        while (iterator.hasNext()) {
+            Teacher teacher1 = iterator.next();
+            if (teacher1.getTeacherId() == teacher.getTeacherId()) {
+                iterator.remove();
+
+            }
+        }
+
+        for (Component component : boardOfTeacherSelected.getComponents()) {
+            boardOfTeacherSelected.remove(component);
+        }
+
+        boolean flag = true;
+        for (Teacher teacher1 : this.teachersSelected) {
+            if (flag) {
+                boardOfTeacherSelected.add(rowComponentCreatorHeard(teacher1, "#EFEFEF"));
+            } else {
+                boardOfTeacherSelected.add(rowComponentCreatorHeard(teacher1, "#FFFFF7"));
+            }
+            flag = !flag;
+        }
+
+        boardOfTeacherSelected.revalidate();
+        boardOfTeacherSelected.repaint();
     }
 
-    public void setTeacher(Teacher teacher) {
-        this.teacher = teacher;
+    private JPanel createTable(){
+        JPanel jPanel = new JPanel();
+        jPanel.setLayout(new BoxLayout(jPanel, BoxLayout.Y_AXIS));
+
+        boolean flag = true;
+        for(Teacher teacher: this.teachersOptions){
+            if(flag){
+                jPanel.add(rowComponentCreator(teacher, "#EFEFEF"));
+            }else{
+                jPanel.add(rowComponentCreator(teacher, "#FFFFF7"));
+            }
+            flag = !flag;
+        }
+
+        return  jPanel;
     }
+
+    private JPanel createTableHead(){
+        JPanel jPanel = new JPanel();
+        jPanel.setLayout(new BoxLayout(jPanel, BoxLayout.Y_AXIS));
+
+        boolean flag = true;
+        for(Teacher teacher: this.teachersSelected){
+            if(flag){
+                jPanel.add(rowComponentCreatorHeard(teacher, "#EFEFEF"));
+            }else{
+                jPanel.add(rowComponentCreatorHeard(teacher, "#FFFFF7"));
+            }
+            flag = !flag;
+        }
+
+        return  jPanel;
+    }
+    private JPanel bodyCreate(){
+
+        JPanel jPanel = new JPanel();
+        GroupLayout layout = new GroupLayout(jPanel);
+        jPanel.setLayout(layout);
+
+        txtSeach = new JTextField();
+        txtSeach.setBackground(Color.decode("#D9D9D9"));
+        txtSeach.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        txtSeach.setFont(new Font("Ubuntu", Font.PLAIN, 20));
+        if(oldSeach != null) txtSeach.setText(oldSeach);
+
+        txtSeach.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                handleTextChange();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                handleTextChange();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                handleTextChange();
+            }
+
+            private void handleTextChange() {
+
+                updateBoardOfSearch(txtSeach.getText());
+
+
+
+            }
+        });
+
+        jPanel.setBackground(Color.decode("#0ABFBF"));
+        JLabel title = new JLabel("Search Teachers");
+        title.setForeground(Color.decode("#ffffff"));
+        title.setFont(new Font("Ubuntu", Font.BOLD, 40));
+        title.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+
+        boardOfTeacherSearch = createTable();
+        JScrollPane scrollPane = new JScrollPane(boardOfTeacherSearch);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addComponent(title, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(txtSeach, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+                                        .addGap(30)
+                        )
+                        .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                        .addComponent(title, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(txtSeach, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
+                        )
+                        .addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+        );
+
+        return  jPanel;
+    }
+
+    private void updateBoardOfSearch(String text) {
+
+        for (Component component : boardOfTeacherSearch.getComponents()) {
+            boardOfTeacherSearch.remove(component);
+        }
+
+        ModalFindTeacher.this.teachersOptions = TeacherManager.selectAll(text);
+
+        boolean flag = true;
+        for(Teacher teacher: ModalFindTeacher.this.teachersOptions){
+            if(flag){
+                boardOfTeacherSearch.add(rowComponentCreator(teacher, "#EFEFEF"));
+            }else{
+                boardOfTeacherSearch.add(rowComponentCreator(teacher, "#FFFFF7"));
+            }
+            flag = !flag;
+        }
+
+        boardOfTeacherSearch.revalidate();
+        boardOfTeacherSearch.repaint();
+    }
+
+    private JPanel footerCreate(){
+
+        JPanel jPanel = new JPanel();
+        GroupLayout layout = new GroupLayout(jPanel);
+        jPanel.setLayout(layout);
+
+        jPanel.setBackground(Color.decode("#0ABFBF"));
+
+        btnFinish = new JButton("FINISH");
+        btnFinish.setBackground(Color.decode("#D7F205"));
+        btnFinish.setFont(new Font("Ubuntu", Font.PLAIN, 20));
+        btnFinish.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        btnFinish.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        btnFinish.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if(cadastroDefesaVariant04 != null){
+                    cadastroDefesaVariant04.getDefense().setBoardOfTeachers(ModalFindTeacher.this.teachersSelected);
+                }
+                ModalFindTeacher.this.destroy();
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                btnFinish.setBackground(Color.decode("#34F907"));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+                btnFinish.setBackground(Color.decode("#D7F205"));
+            }
+        });
+
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btnFinish, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
+                                        .addGap(20)
+                        )
+        );
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addGap(5)
+                        .addGroup(
+
+                                layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                        .addComponent(btnFinish, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
+                        )
+        );
+
+        return  jPanel;
+    }
+
+    private void destroy() {
+        jFrame.dispose();
+    }
+
+    private class WrapperButton{
+        JPanel jPanel;
+        JButton jButton;
+    }
+
 }

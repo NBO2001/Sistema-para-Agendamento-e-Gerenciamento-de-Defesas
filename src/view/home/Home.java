@@ -164,7 +164,7 @@ public class Home implements Visibled {
         scrollPane.setBorder(null); // Remove the color border
 
         layout.setHorizontalGroup(
-                layout.createParallelGroup()
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addComponent(label, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(scrollPane)
         );

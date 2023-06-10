@@ -1,5 +1,8 @@
 package model;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -68,8 +71,24 @@ public class Utils {
         return usDate;
     }
 
+    public static String dateForBr(Date date){
+
+        DateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        String usDate = outputFormat.format(date);
+        return usDate;
+    }
+
+    public static String dateForStringEUAWithHour(Date date){
+
+        DateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        String usDate = outputFormat.format(date);
+        return usDate;
+    }
+
     public static Date strToDateBrWithHour(String date){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mma");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         try {
             return dateFormat.parse(date);
         } catch (ParseException e) {
@@ -83,6 +102,18 @@ public class Utils {
         return dateFormat.format(date);
     }
 
+    public static boolean isValidTime(String time) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+        dateFormat.setLenient(false);
+
+        try {
+            // Parse the input time string
+            dateFormat.parse(time);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
+    }
     public static boolean isValidCpf(String cpf) {
         // Remove any non-digit characters from the CPF
         cpf = cpf.replaceAll("\\D", "");
@@ -129,6 +160,25 @@ public class Utils {
 
     }
 
+    public static String encryptTolkienName(String name) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            byte[] hashBytes = md.digest(name.getBytes(StandardCharsets.UTF_8));
+
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hashBytes) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1)
+                    hexString.append('0');
+                hexString.append(hex);
+            }
+
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 
 }

@@ -63,6 +63,46 @@ public class BoardOfTeachers extends ConnectionBase{
 
     }
 
+    /**
+     * The flag inform at the search for teacher id
+     * */
+    public static boolean containsInBase(int teacherId){
+
+        boolean returned = false;
+        String sql = "SELECT COUNT(*) as tol " +
+                "FROM boardOfTeachers b " +
+                "JOIN teachers t ON b.teacher = t.teacher_id " +
+                "JOIN people p ON p.personId = t.personId " +
+                "WHERE t.teacher_id = ?";
+
+        try{
+
+            PreparedStatement stmt = conexao.prepareStatement(sql);
+
+            stmt.setInt(1, teacherId);
+
+
+            ResultSet resultSet = stmt.executeQuery();
+
+            if (resultSet.next()){
+
+                returned = resultSet.getInt("tol") != 0;
+
+            }
+
+            resultSet.close();
+            stmt.close();
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return returned;
+
+
+    }
+
     public static boolean delete(int defenseId, int teacherId){
 
         String sql = "DELETE FROM boardOfTeachers " +

@@ -37,8 +37,15 @@ public class ModalViewDefense implements Visibled {
     private JButton deleteDefense;
     private JButton updateDefense;
     private JButton closeUpdate;
+    private Visibled afterView;
+    public ModalViewDefense(Defense defense, Visibled afterView){
+        this.setDefense(defense);
+        this.afterView = afterView;
+        initialize();
+    }
     public ModalViewDefense(Defense defense){
         this.setDefense(defense);
+        this.afterView = null;
         initialize();
     }
 

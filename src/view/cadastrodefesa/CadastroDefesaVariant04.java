@@ -5,11 +5,13 @@ import model.Defense;
 import model.DefenseManager;
 import model.StudentManager;
 import model.Teacher;
+import view.cadastro.Cadastro;
 import view.cadastroaluno.CadastroAluno;
 import view.modalfindteacher.ModalFindTeacher;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -18,14 +20,6 @@ public class CadastroDefesaVariant04 implements Visibled {
 
     private  JFrame jFrame;
     private JPanel panel1;
-    private JButton btnMenu;
-    private JPanel jPanelMenu;
-    private JButton btnCadStu;
-    private JButton btnCadTeac;
-    private JButton btnCadUser;
-    private JButton btnCadDefense;
-    private JButton btnAlterCad;
-    private JButton btnRelatorio;
     private JPanel jPanelHome;
     private JTextField textFieldStudent;
     private JTextField textFieldTeach;
@@ -36,9 +30,8 @@ public class CadastroDefesaVariant04 implements Visibled {
     private JPanel panelOption;
     private JTextField textFieldNomeProfessor;
     private JButton btnVerify;
-    private JTable tableInfors;
     private JTextField textTypeDefesa;
-    private JPanel panelFundoTable;
+    private JButton btnBack;
 
     private DefaultTableModel model;
 
@@ -50,22 +43,27 @@ public class CadastroDefesaVariant04 implements Visibled {
         this.setDefense(defense);
 
         this.setInfo();
-        btnMenu.addMouseListener(new MouseAdapter() {
+
+        btnBack.setSize(80,80);
+        btnBack.setOpaque(false);
+        btnBack.setContentAreaFilled(false);
+        btnBack.setBorderPainted(false);
+        btnBack.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        btnBack.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                jPanelMenu.setVisible(!jPanelMenu.isVisible());
-
+                if(afterView != null) afterView.setVisible(true);
+                CadastroDefesaVariant04.this.destroy();
             }
         });
-
-
 
         btnVerify.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                ModalFindTeacher modalFindTeacher = new ModalFindTeacher(textFieldNomeProfessor.getText(), CadastroDefesaVariant04.this);
+                ModalFindTeacher modalFindTeacher = new ModalFindTeacher(textFieldNomeProfessor.getText(), CadastroDefesaVariant04.this, CadastroDefesaVariant04.this.getDefense().getBoardOfTeachers());
                 modalFindTeacher.setVisible(true);
 
 
@@ -75,6 +73,12 @@ public class CadastroDefesaVariant04 implements Visibled {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+                if(defense.getBoardOfTeachers().size() == 0){
+                    JOptionPane.showMessageDialog(null,"Teacher of board is empty!!", "Error", JOptionPane.ERROR_MESSAGE);
+                    ModalFindTeacher modalFindTeacher = new ModalFindTeacher(textFieldNomeProfessor.getText(), CadastroDefesaVariant04.this, CadastroDefesaVariant04.this.getDefense().getBoardOfTeachers());
+                    modalFindTeacher.setVisible(true);
+                    return;
+                }
                 if(DefenseManager.insert(defense)){
                     JOptionPane.showMessageDialog(null, "Insert success!");
 
@@ -92,6 +96,10 @@ public class CadastroDefesaVariant04 implements Visibled {
                 }
             }
         });
+    }
+
+    private void destroy() {
+        jFrame.dispose();
     }
 
     private void initialize(){
@@ -117,15 +125,6 @@ public class CadastroDefesaVariant04 implements Visibled {
         this.jFrame.setVisible(value);
     }
 
-    private void createUIComponents() {
-
-        DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{}, new Object[]{"Nome", "Matrícula", "Ação"});
-
-        this.tableInfors = new JTable(tableModel);
-
-
-    }
-
     public Defense getDefense() {
         return defense;
     }
@@ -148,12 +147,4 @@ public class CadastroDefesaVariant04 implements Visibled {
         }
     }
 
-    public void addBoardOfTeachers(Teacher teacher){
-        if(teacher != null){
-            DefaultTableModel model = (DefaultTableModel) this.tableInfors.getModel();
-            model.addRow(new Object[]{teacher.getName(), teacher.getRegister(), "Ação"});
-            this.defense.getBoardOfTeachers().add(teacher);
-        }
-
-    }
 }

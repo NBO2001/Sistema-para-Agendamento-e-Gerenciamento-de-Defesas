@@ -115,8 +115,10 @@ public class Reports implements Visibled {
         jPanelMenu.setVisible(false);
         this.jFrame.setVisible(value);
 
-        if(!value) cleaning();
-        else update();
+        if(value){
+            cleaning();
+            update();
+        }
 
     }
 

@@ -194,9 +194,19 @@ public class TeacherManager extends ConnectionBase{
 
     public static boolean delete(Person teacher){
 
+        Teacher teacher1 = (Teacher) teacher;
+
+        DefenseManager defenseManager = new DefenseManager();
+
+        ArrayList<Defense> defenses =  defenseManager.selectAll(((Teacher) teacher).getTeacherId(),1);
+
+        if(defenses.size() != 0) return false;
+
+        if(BoardOfTeachers.containsInBase(teacher1.getTeacherId())) return false;
+
         // SQL delete statement
         String sql = "DELETE FROM teachers WHERE teacher_id = ?";
-        Teacher teacher1 = (Teacher) teacher;
+
 
         try{
             PreparedStatement stmt = conexao.prepareStatement(sql);

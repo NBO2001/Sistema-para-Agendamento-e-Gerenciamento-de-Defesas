@@ -52,7 +52,7 @@ public class Person {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name!=null? name.trim(): null;
     }
 
     public String getSocialName() {
@@ -60,7 +60,8 @@ public class Person {
     }
 
     public void setSocialName(String socialName) {
-        this.socialName = socialName;
+
+        this.socialName = socialName!=null? socialName.trim(): null;
     }
 
     public Date getBirthday() {
@@ -72,6 +73,7 @@ public class Person {
     }
 
     public void setBirthday(String birthday) {
+        birthday = birthday.trim();
         birthday = birthday.replaceAll("\\s", "");
         DateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy");
 //        DateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -90,7 +92,7 @@ public class Person {
     }
 
     public void setCpf(String cpf) {
-
+        cpf = cpf.trim();
         String cleanedCpf = cpf.replaceAll("[.-]", "");
 
         this.cpf = cleanedCpf;
@@ -102,7 +104,7 @@ public class Person {
     }
 
     public void setRg(String rg) {
-        this.rg = rg;
+        this.rg = rg!=null? rg.trim(): null;
     }
 
     public String getEmail() {
@@ -110,7 +112,7 @@ public class Person {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = email!=null? email.trim(): null;
     }
 
     public String getPhoneNumber() {
@@ -118,7 +120,7 @@ public class Person {
     }
 
     public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+        this.phoneNumber = phoneNumber!=null? phoneNumber.trim(): null;
     }
 
     @Override
@@ -176,6 +178,20 @@ public class Person {
         }
 
         return true;
+
+    }
+
+
+    public void clone(Person person){
+
+        this.setName(person.getName());
+        this.setSocialName(person.getSocialName());
+        this.setCpf(person.getCpf());
+        this.setRg(person.getRg());
+        this.setBirthday(person.getBirthday());
+        this.setPersonId(person.getPersonId());
+        this.setEmail(person.getEmail());
+        this.setPhoneNumber(person.getPhoneNumber());
 
     }
 }

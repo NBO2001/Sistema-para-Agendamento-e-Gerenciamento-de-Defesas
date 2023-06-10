@@ -19,13 +19,6 @@ public class Cadastro implements Visibled {
 
     private JFrame jFrame;
     private JPanel panel1;
-    private JButton btnMenu;
-    private JPanel jPanelMenu;
-    private JButton btnCadStu;
-    private JButton btnCadTeac;
-    private JButton btnCadUser;
-    private JButton btnCadDefense;
-    private JButton btnAlterCad;
     private JPanel jPanelHome;
     private JTextField textFieldCPF2;
     private JButton btnVerify;
@@ -47,14 +40,7 @@ public class Cadastro implements Visibled {
     public Cadastro(Visibled afterView, VisiblePersonified nextView){
         this.afterView = afterView;
         initialize();
-        btnMenu.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                jPanelMenu.setVisible(!jPanelMenu.isVisible());
 
-            }
-        });
 
         btnVerify.addMouseListener(new MouseAdapter() {
             @Override
@@ -300,7 +286,6 @@ public class Cadastro implements Visibled {
     }
 
     public void setVisible(boolean value){
-        this.jPanelMenu.setVisible(false);
         this.jFrame.setVisible(value);
     }
 
@@ -311,4 +296,6 @@ public class Cadastro implements Visibled {
     public void setPerson(Person person) {
         this.person = person;
     }
+
+
 }
