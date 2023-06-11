@@ -47,6 +47,31 @@ public class Utils {
         }
     }
 
+    public static String defenseDateExtension(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a, MMMM d, yyyy");
+        return sdf.format(date);
+    }
+
+    public static Date strToDateEUA(String date){
+        date = date.trim();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            return dateFormat.parse(date);
+        } catch (ParseException e) {
+
+            try{
+                dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                return dateFormat.parse(date);
+            } catch (ParseException ex) {
+                e.printStackTrace();
+                return null; // or handle the exception in an appropriate way
+            }
+
+        }
+    }
+
+
     public static String dateBrForDateEua(String date){
         date = date.replaceAll("\\s", "");
         DateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -102,6 +127,10 @@ public class Utils {
         return dateFormat.format(date);
     }
 
+    public static String hourOfTheDate(Date date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+        return dateFormat.format(date);
+    }
     public static boolean isValidTime(String time) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
         dateFormat.setLenient(false);

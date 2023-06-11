@@ -3,6 +3,9 @@ package model;
 import view.cadastrodefesa.CadastroDefesaVariant03;
 import view.home.Home;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -181,4 +184,127 @@ public class Defense {
         }
 
     }
+
+    public void clone(Defense defense){
+
+
+        this.setDefenseId(defense.getDefenseId());
+        this.setTypeDefense(defense.getTypeDefense());
+        this.setDefenseTitle(defense.getDefenseTitle());
+        this.setDate(defense.getDate());
+        this.setLocal(defense.getLocal());
+        this.setTeacherAdvisor(defense.getTeacherAdvisor());
+        this.setStudentDefending(defense.getStudentDefending());
+        this.setFinalPontuation(defense.getFinalPontuation());
+        this.setStatus(defense.getStatus());
+        this.setObservation(defense.getObservation());
+
+        ArrayList<Teacher> boardOfTeachers_clone = new ArrayList<>();
+
+        if(defense.getBoardOfTeachers() != null){
+            for(Teacher teacher: defense.getBoardOfTeachers()){
+                boardOfTeachers_clone.add(teacher);
+            }
+        }
+
+        this.setBoardOfTeachers(boardOfTeachers_clone);
+
+    }
+
+    public static boolean callForDefense(String filePath, Defense defense) {
+
+        String teachesBoard ="";
+        int i=0;
+        for(; i < defense.getBoardOfTeachers().size()-1;i++){
+            teachesBoard += defense.getBoardOfTeachers().get(i).getName() + ", ";
+        }
+
+        teachesBoard += defense.getBoardOfTeachers().get(i).getName();
+
+        // Generate the HTML code
+        String htmlCode = "<!DOCTYPE html>\n" +
+                "<html lang='en'>\n" +
+                "<head>\n" +
+                "  <meta charset='UTF-8'>\n" +
+                "  <meta name='viewport' content='width=device-width, initial-scale=1.0'>\n" +
+                "  <title>Article Defense Call</title>\n" +
+                "  <style>\n" +
+                "    body {\n" +
+                "      background-color: #FFFFF7;\n" +
+                "      color: #D93A2B;\n" +
+                "      font-family: Arial, sans-serif;\n" +
+                "      margin: 0;\n" +
+                "      padding: 0;\n" +
+                "    }\n" +
+                "    .container {\n" +
+                "      max-width: 800px;\n" +
+                "      margin: 0 auto;\n" +
+                "      padding: 20px;\n" +
+                "    }\n" +
+                "    header, footer {\n" +
+                "      background-color: #0ABFBF;\n" +
+                "      color: #FFFFFF;\n" +
+                "      padding: 20px;\n" +
+                "      text-align: center;\n" +
+                "    }\n" +
+                "    h1 {\n" +
+                "      color: #D93A2B;\n" +
+                "      font-size: 24px;\n" +
+                "    }\n" +
+                "    p {\n" +
+                "      font-size: 16px;\n" +
+                "      margin-bottom: 10px;\n" +
+                "    }\n" +
+                "    .qrcode {\n" +
+                "      text-align: center;\n" +
+                "      margin-top: 20px;\n" +
+                "    }\n" +
+                "    .invitation {\n" +
+                "      margin-top: 30px;\n" +
+                "      font-size: 18px;\n" +
+                "      text-align: center;\n" +
+                "    }\n" +
+                "  </style>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "  <header>\n" +
+                "    <img src='https://ufam.edu.br/images/conteudo/aniversario/114/u114a.jpg' alt='University Logo' width='310'>\n" +
+                "  </header>\n" +
+                "\n" +
+                "  <div class='container'>\n" +
+                "    <h1>Article Defense Call</h1>\n" +
+                "\n" +
+                "    <p><strong>Student:</strong> " + defense.getStudentDefending().getName() + "</p>\n" +
+                "    <p><strong>Program:</strong> " + Defense.parseTypeDefenseFormatString(defense.getTypeDefense()) + "</p>\n" +
+                "    <p><strong>Article Title:</strong> " + defense.getDefenseTitle() + "</p>\n" +
+                "    <p><strong>Guiding Professor:</strong> " + defense.getTeacherAdvisor().getName() +"</p>\n" +
+                "    <p><strong>Evaluation Board:</strong> " + teachesBoard + "</p>\n" +
+                "    <p><strong>Date and Time:</strong> " + Utils.defenseDateExtension(defense.getDate()) + "</p>\n" +
+                "\n" +
+                "    <div class='qrcode'>\n" +
+                "      <img src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + defense.getStudentDefending().getEmail() + "' alt='Author's Email QR Code' width='150'>\n" +
+                "    </div>\n" +
+                "\n" +
+                "    <div class='invitation'>\n" +
+                "      <p>Please join us for the defense of "+defense.getStudentDefending().getName()+"'s article titled '"+ defense.getDefenseTitle() +"' on "+ Utils.defenseDateExtension(defense.getDate()) + " in the " + defense.getLocal() +".</p>\n" +
+                "      <p>We look forward to your presence!</p>\n" +
+                "    </div>\n" +
+                "  </div>\n" +
+                "\n" +
+                "  <footer>\n" +
+                "    <img src='https://icomp.ufam.edu.br/images/icomp.png' alt='Institute Logo' width='150'>\n" +
+                "  </footer>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        // Save the HTML code to the specified file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            writer.write(htmlCode);
+            return true;
+        } catch (IOException e) {
+            System.out.println("Error occurred while saving the HTML file: " + e.getMessage());
+        }
+        return false;
+    }
+
 }

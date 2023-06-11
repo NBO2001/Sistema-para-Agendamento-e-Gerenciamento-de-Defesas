@@ -2,19 +2,23 @@ package view.modals;
 
 import interfaces.Visibled;
 import model.*;
+import view.modalfindteacher.ModalFindTeacher;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class ModalViewDefense implements Visibled {
@@ -23,21 +27,25 @@ public class ModalViewDefense implements Visibled {
     private Defense defense;
     private JPanel tableOfTeachers;
     private JPanel footer;
-
     private LabelAndTitleContainer titleJobContainer;
     private ComboBoxAndTitleContainer typeDefenseContainer;
     private LabelAndTitleContainer localContainer;
     private LabelAndTitleContainer dateContainer;
+    private LabelAndTitleContainer hourContainer;
     private LabelAndTitleContainer finalPontuation;
     private LabelAndTitleContainer observation;
     private CheckBoxAndTitleContainer statusDefense;
     private JButton alterComponents;
     private JButton certificatePrint;
+    private JButton callToDefense;
     private JButton closeWindow;
     private JButton deleteDefense;
     private JButton updateDefense;
     private JButton closeUpdate;
+    private JButton btnChangeTeacherOfBoards;
     private Visibled afterView;
+    private Defense oldDefense;
+    private JScrollPane scrollPane;
     public ModalViewDefense(Defense defense, Visibled afterView){
         this.setDefense(defense);
         this.afterView = afterView;
@@ -52,19 +60,16 @@ public class ModalViewDefense implements Visibled {
     private void initialize(){
 
         jFrame = new JFrame();
-        jFrame.setMaximumSize(new Dimension(850,800));
+
         jFrame.setMinimumSize(new Dimension(850,600));
-        jFrame.setPreferredSize(new Dimension(850,800));
-        jFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        jFrame.setPreferredSize(new Dimension(1500,1500));
+        jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         jFrame.setBackground(Color.decode("#FFFFFF"));
-        jFrame.setLocationRelativeTo(null);
+
 
         JPanel jPanel = new JPanel();
         jPanel.setBackground(Color.decode("#FFFFFF"));
         jPanel.setLayout(new BoxLayout(jPanel,BoxLayout.Y_AXIS));
-
-        jPanel.setSize(850,900);
-        jPanel.setPreferredSize(new Dimension(830,1200));
 
         jPanel.add(ModalViewDefense.topView(getDefense()));
         jPanel.add(containerDefenseInfo(getDefense()));
@@ -92,10 +97,11 @@ public class ModalViewDefense implements Visibled {
 
         }
 
-        JScrollPane scrollPane = new JScrollPane(jPanel);
+        scrollPane = new JScrollPane(jPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-        titleJobContainer.textField.getDocument().addDocumentListener(new DocumentListener() {
+
+        titleJobContainer.jTextArea.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 handleTextChange();
@@ -114,7 +120,7 @@ public class ModalViewDefense implements Visibled {
             private void handleTextChange() {
 
                 if(ModalViewDefense.this.getDefense() != null){
-                    ModalViewDefense.this.getDefense().setDefenseTitle(titleJobContainer.textField.getText());
+                    ModalViewDefense.this.getDefense().setDefenseTitle(titleJobContainer.jTextArea.getText());
                 }
 
             }
@@ -178,7 +184,39 @@ public class ModalViewDefense implements Visibled {
             private void handleTextChange() {
 
                 if(ModalViewDefense.this.getDefense() != null){
-                    ModalViewDefense.this.getDefense().setDate(dateContainer.textField.getText());
+                    if(Utils.isValidDate(dateContainer.textField.getText())){
+                        ModalViewDefense.this.getDefense().setDate(Utils.strToDateBr(dateContainer.textField.getText()));
+                    }
+
+                }
+
+            }
+        });
+
+        hourContainer.textField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                handleTextChange();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                handleTextChange();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                handleTextChange();
+            }
+
+            private void handleTextChange() {
+
+                if(ModalViewDefense.this.getDefense() != null){
+                    if(Utils.isValidTime(hourContainer.textField.getText())){
+                        String date = Utils.dateForBr(defense.getDate()) + " " + hourContainer.textField.getText();
+                        ModalViewDefense.this.getDefense().setDate(Utils.strToDateBrWithHour(date));
+                    }
+
                 }
 
             }
@@ -203,7 +241,7 @@ public class ModalViewDefense implements Visibled {
             private void handleTextChange() {
 
                 if(ModalViewDefense.this.getDefense() != null){
-                    ModalViewDefense.this.getDefense().setFinalPontuation(Defense.stringToDouble(finalPontuation.textField.getText()));
+                    if(!finalPontuation.textField.getText().isEmpty()) ModalViewDefense.this.getDefense().setFinalPontuation(Defense.stringToDouble(finalPontuation.textField.getText()));
                 }
 
             }
@@ -263,12 +301,14 @@ public class ModalViewDefense implements Visibled {
             }
         });
 
-        jFrame.add(scrollPane);
+        jFrame.getContentPane().add(scrollPane);
+
+        jFrame.pack();
 
     }
     private JPanel footerAlterAndFinally() {
         JPanel jPanel = new JPanel();
-        jPanel.setBackground(Color.decode("#FFFFFF"));
+        jPanel.setBackground(Color.decode("#0ABFBF"));
         GroupLayout layout = new GroupLayout(jPanel);
         jPanel.setLayout(layout);
         layout.setAutoCreateGaps(true);
@@ -291,12 +331,16 @@ public class ModalViewDefense implements Visibled {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                titleJobContainer.textField.setEditable(true);
-                titleJobContainer.textField.setFocusable(true);
+                titleJobContainer.jTextArea.setEditable(true);
+                titleJobContainer.jTextArea.setFocusable(true);
 
                 typeDefenseContainer.jComboBox.setEnabled(true);
                 dateContainer.textField.setEditable(true);
                 dateContainer.textField.setFocusable(true);
+
+                hourContainer.textField.setEditable(true);
+                hourContainer.textField.setFocusable(true);
+
                 localContainer.textField.setEditable(true);
                 localContainer.textField.setFocusable(true);
 
@@ -311,8 +355,71 @@ public class ModalViewDefense implements Visibled {
                 closeUpdate.setVisible(true);
                 alterComponents.setVisible(false);
                 certificatePrint.setVisible(false);
+                callToDefense.setVisible(false);
                 closeWindow.setVisible(false);
 
+                btnChangeTeacherOfBoards.setVisible(true);
+
+                oldDefense = new Defense();
+                oldDefense.clone(defense);
+
+            }
+        });
+
+        callToDefense = new JButton("Call Defense");
+        callToDefense.setFont(new Font("Ubuntu", Font.PLAIN, 18));
+        callToDefense.setBackground(Color.decode("#D7F205"));
+        callToDefense.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        callToDefense.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        callToDefense.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle("Save HTML File");
+
+                // Set file filter to accept only HTML files
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("HTML Files", "html");
+                fileChooser.setFileFilter(filter);
+
+
+                int userSelection = fileChooser.showSaveDialog(null);
+
+                if (userSelection == JFileChooser.APPROVE_OPTION) {
+                    File fileToSave = fileChooser.getSelectedFile();
+
+                    // Check if the file name has an extension
+                    String fileName = fileToSave.getName();
+
+                    if (!fileName.contains(".")) {
+                        // Add .html extension if no extension is specified
+                        fileToSave = new File(fileToSave.getAbsolutePath() + ".html");
+                    } else {
+                        // Check if the extension is different from .html
+                        String fileExtension = fileName.substring(fileName.lastIndexOf("."));
+                        if (!fileExtension.equalsIgnoreCase(".html")) {
+                            // Replace the extension with .html
+                            fileToSave = new File(fileToSave.getAbsolutePath().replace(fileExtension, ".html"));
+                        }
+                    }
+
+                    if(Defense.callForDefense(String.valueOf(fileToSave.getAbsoluteFile()), defense))
+                        JOptionPane.showMessageDialog(null, "Salvo com sucesso!!");
+
+                }
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                callToDefense.setBackground(Color.decode("#F9D107"));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+                callToDefense.setBackground(Color.decode("#D7F205"));
             }
         });
 
@@ -392,9 +499,9 @@ public class ModalViewDefense implements Visibled {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
 
-                if(DefenseManager.update(defense)){
+                if(DefenseManager.update(defense, oldDefense)){
                     JOptionPane.showMessageDialog(null, "Atualizado com sucesso!");
-                    disabilityButtons();
+                    disabilityButtons(false);
                 }else{
                     JOptionPane.showMessageDialog(null, "Error updated.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -441,6 +548,7 @@ public class ModalViewDefense implements Visibled {
         closeUpdate.setFont(new Font("Ubuntu", Font.PLAIN, 18));
         closeUpdate.setBackground(Color.decode("#F78484"));
         closeUpdate.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        closeUpdate.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         closeUpdate.setVisible(false);
 
         closeUpdate.addMouseListener(new MouseAdapter() {
@@ -458,131 +566,244 @@ public class ModalViewDefense implements Visibled {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
 
-                disabilityButtons();
+                disabilityButtons(true);
 
             }
         });
 
+        alterComponents.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        certificatePrint.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        closeWindow.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        deleteDefense.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        updateDefense.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        closeUpdate.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
         layout.setHorizontalGroup(
-                layout.createSequentialGroup()
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(alterComponents, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(certificatePrint, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(closeWindow, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(deleteDefense, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(updateDefense, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(closeUpdate, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
-                        .addGap(20)
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(alterComponents, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(certificatePrint, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(callToDefense, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(closeWindow, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(deleteDefense, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(updateDefense, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(closeUpdate, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
+                                        .addGap(20)
+                        )
         );
 
         layout.setVerticalGroup(
-                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(alterComponents, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(certificatePrint, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(closeWindow, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(deleteDefense, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(updateDefense, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(closeUpdate, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
-                        .addGap(20)
+                layout.createSequentialGroup()
+                        .addGap(10)
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(alterComponents, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(certificatePrint, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(callToDefense, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(closeWindow, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(deleteDefense, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(updateDefense, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(closeUpdate, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
+                                        .addGap(20)
+                        )
+                        .addGap(10)
         );
 
         return jPanel;
     }
+    private void disabilityButtons(boolean clear) {
 
-    private void disabilityButtons() {
-
-        titleJobContainer.textField.setEditable(false);
-        titleJobContainer.textField.setFocusable(false);
-
+        titleJobContainer.jTextArea.setEditable(false);
+        titleJobContainer.jTextArea.setFocusable(false);
         typeDefenseContainer.jComboBox.setEnabled(false);
         dateContainer.textField.setEditable(false);
         dateContainer.textField.setFocusable(false);
+        hourContainer.textField.setEditable(false);
+        hourContainer.textField.setFocusable(false);
         localContainer.textField.setEditable(false);
         localContainer.textField.setFocusable(false);
-
         observation.textField.setEditable(false);
         observation.textField.setFocusable(false);
         finalPontuation.textField.setEditable(false);
         finalPontuation.textField.setFocusable(false);
         statusDefense.jCheckBox.setEnabled(false);
 
+        if(clear && oldDefense != null) defense.clone(oldDefense);
+
+        titleJobContainer.jTextArea.setText(defense.getDefenseTitle());
+        dateContainer.textField.setText(Utils.dateForBr(defense.getDate()));
+        hourContainer.textField.setText(Utils.hourOfTheDate(defense.getDate()));
+        localContainer.textField.setText(defense.getLocal());
+        observation.textField.setText(defense.getObservation());
+        finalPontuation.textField.setText( Double.toString(defense.getFinalPontuation()));
+        statusDefense.jCheckBox.setSelected(defense.getStatus() == 1);
+
+        typeDefenseContainer.jComboBox.setEnabled(false);
+
+        for (int i = 0; i <  typeDefenseContainer.jComboBox.getItemCount(); i++) {
+            ModalViewDefense.AnyObject item = (AnyObject)  typeDefenseContainer.jComboBox.getItemAt(i);
+            if (item.getValue() == defense.getTypeDefense()) {
+                typeDefenseContainer.jComboBox.setSelectedItem(item);
+                break;
+            }
+        }
+
         alterComponents.setVisible(true);
 
         if(defense != null && defense.getStatus() == 1){
             certificatePrint.setVisible(true);
+            callToDefense.setVisible(false);
         }else{
             certificatePrint.setVisible(false);
+            callToDefense.setVisible(true);
         }
+
+        updateViewAndTeacherBoards(defense.getBoardOfTeachers());
 
         closeWindow.setVisible(true);
 
         updateDefense.setVisible(false);
         closeUpdate.setVisible(false);
         deleteDefense.setVisible(false);
+        btnChangeTeacherOfBoards.setVisible(false);
 
     }
+    private static JPanel contentTopView(Defense defense){
+        JPanel content = new JPanel();
 
-    private static JPanel topView(Defense defense) {
-        JPanel topView = new JPanel();
-        topView.setBackground(Color.decode("#FFFFFF"));
-
-        GroupLayout layout = new GroupLayout(topView);
-        topView.setLayout(layout);
+        GroupLayout layout = new GroupLayout(content);
+        content.setLayout(layout);
         layout.setAutoCreateGaps(true);
-        layout.setAutoCreateContainerGaps(true);
 
-        JLabel jLabel = new JLabel("Informações");
-        jLabel.setFont(new Font("Ubuntu", Font.BOLD, 40));
-        jLabel.setBackground(Color.decode("#FFFFFF"));
+        content.setBackground(Color.decode("#fffff7"));
 
         JPanel jPanel = ModalViewDefense.createTopContainer("Aluno", defense.getStudentDefending());
         JPanel jPanel1 = ModalViewDefense.createTopContainer("Professor", defense.getTeacherAdvisor());
 
+        jPanel.setBackground(Color.decode("#fffff7"));
+        jPanel1.setBackground(Color.decode("#fffff7"));
+
         layout.setHorizontalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createSequentialGroup()
-                                .addComponent(jPanel)
-                                .addComponent(jPanel1))
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        )
+
         );
 
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addComponent(jPanel, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
+                        )
+        );
+
+        return content;
+    }
+    private static JPanel topView(Defense defense) {
+        JPanel topView = new JPanel();
+
+        topView.setBackground(Color.decode("#0ABFBF"));
+
+        GroupLayout layout = new GroupLayout(topView);
+        topView.setLayout(layout);
+        layout.setAutoCreateGaps(true);
+
+        JLabel jLabel = new JLabel("Informações");
+        jLabel.setFont(new Font("Ubuntu", Font.BOLD, 40));
+        jLabel.setForeground(Color.decode("#ffffff"));
+        jLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JPanel content = contentTopView(defense);
+
+
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addComponent(jLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(jPanel)
-                                .addComponent(jPanel1))
+                        .addComponent(content, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+
+        );
+
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addComponent(jLabel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(content, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
         );
 
         return topView;
     }
-
-
     private JPanel containerBoardOfTeacher(Defense defense){
 
         JPanel jPanel = new JPanel();
-        jPanel.setBackground(Color.decode("#FFFFFF"));
+        jPanel.setBackground(Color.decode("#0ABFBF"));
         GroupLayout layout = new GroupLayout(jPanel);
         jPanel.setLayout(layout);
-        layout.setAutoCreateGaps(true);
-        layout.setAutoCreateContainerGaps(true);
+
 
         JLabel jLabel = new JLabel("Informações de banca");
         jLabel.setFont(new Font("Ubuntu", Font.BOLD, 40));
+        jLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        jLabel.setForeground(Color.decode("#ffffff"));
+
+        btnChangeTeacherOfBoards = new JButton("Change Board");
+        btnChangeTeacherOfBoards.setBackground(Color.decode("#D7F205"));
+        btnChangeTeacherOfBoards.setFocusPainted(false);
+        btnChangeTeacherOfBoards.setFont(new Font("Ubuntu", Font.PLAIN, 18));
+        btnChangeTeacherOfBoards.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnChangeTeacherOfBoards.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        btnChangeTeacherOfBoards.setVisible(false);
+
+        btnChangeTeacherOfBoards.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                new ModalFindTeacher(ModalViewDefense.this, ModalViewDefense.this.getDefense().getBoardOfTeachers())
+                        .setVisible(true);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                btnChangeTeacherOfBoards.setBackground(Color.decode("#F9D107"));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+                btnChangeTeacherOfBoards.setBackground(Color.decode("#D7F205"));
+            }
+        });
 
         this.tableOfTeachers = ModalViewDefense.tableCreate(defense);
 
         layout.setHorizontalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(this.tableOfTeachers)
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addComponent(jLabel, GroupLayout.PREFERRED_SIZE, 600, GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btnChangeTeacherOfBoards, GroupLayout.PREFERRED_SIZE, 150, GroupLayout.PREFERRED_SIZE)
+                                        .addGap(10)
+
+                        )
+                        .addComponent(this.tableOfTeachers, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
-                        .addComponent(jLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(this.tableOfTeachers)
-                        .addGap(20)
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                        .addComponent(jLabel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btnChangeTeacherOfBoards, GroupLayout.PREFERRED_SIZE, 60, GroupLayout.PREFERRED_SIZE)
+                        )
+                        .addComponent(this.tableOfTeachers, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
 
@@ -610,10 +831,9 @@ public class ModalViewDefense implements Visibled {
         rowPanel.setBackground(Color.decode("#FFFFFF"));
 
 
-//        layout.setAutoCreateContainerGaps(true);
-        layout.setAutoCreateGaps(true);
-
-        JLabel nameLabel = new JLabel(name);
+        JTextArea nameLabel = new JTextArea(name);
+        nameLabel.setWrapStyleWord(true);
+        nameLabel.setLineWrap(true);
         nameLabel.setOpaque(true);
         nameLabel.setBackground(Color.decode(color));
 
@@ -622,54 +842,13 @@ public class ModalViewDefense implements Visibled {
         enrollmentLabel.setBackground(Color.decode(color));
 
 
-
-        JButton actionButton = new JButton("Delete");
-        actionButton.setOpaque(true);
-        actionButton.setBackground(Color.decode("#F78484"));
-        actionButton.putClientProperty("idDefense", idDefense);
-        actionButton.putClientProperty("idTeacher", idTeacher);
-        actionButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-
-                int choice = JOptionPane.showConfirmDialog(null,
-                        "Are you sure you want to delete?", "Confirmation", JOptionPane.YES_NO_OPTION);
-                if (choice == JOptionPane.YES_OPTION) {
-
-                    int defenseId = (int) actionButton.getClientProperty("idDefense");
-                    int idTeacher = (int) actionButton.getClientProperty("idTeacher");
-
-                    if(BoardOfTeachers.delete(defenseId, idTeacher)){
-                        JOptionPane.showMessageDialog(null,"Removido com sucesso!!");
-                        int componentCount = tableOfTeachers.getComponentCount();
-                        if (componentCount > 0) {
-                            int lastIndex = componentCount - 1;
-                            Component lastComponent = tableOfTeachers.getComponent(lastIndex);
-                            tableOfTeachers.remove(lastComponent);
-                            tableOfTeachers.revalidate();
-                            tableOfTeachers.repaint();
-                        }
-                    }else{
-                        JOptionPane.showMessageDialog(null, "Erro ao tentar apagar", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-
-                }
-
-
-            }
-        });
-
         layout.setHorizontalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(
                                 layout.createSequentialGroup()
-                                        .addComponent(nameLabel, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE)
-                                        .addGap(5)
-                                        .addComponent(enrollmentLabel, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE)
-                                        .addGap(5)
-                                        .addComponent(actionButton, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE)
-                                        .addGap(5)
+                                        .addComponent(nameLabel, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(enrollmentLabel, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE)
+
                         )
         );
 
@@ -681,8 +860,6 @@ public class ModalViewDefense implements Visibled {
                                         .addGap(5)
                                         .addComponent(enrollmentLabel, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
                                         .addGap(5)
-                                        .addComponent(actionButton, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
-                                        .addGap(5)
                         )
         );
 
@@ -690,15 +867,11 @@ public class ModalViewDefense implements Visibled {
 
         return rowPanel;
     }
-
     private static JPanel createHeadTable() {
         JPanel jPanel = new JPanel();
         jPanel.setBackground(Color.decode("#FFFFFF"));
         GroupLayout layout = new GroupLayout(jPanel);
         jPanel.setLayout(layout);
-
-//        layout.setAutoCreateContainerGaps(true);
-        layout.setAutoCreateGaps(true);
 
         JLabel nomeTeacher = new JLabel("Professor");
         nomeTeacher.setOpaque(true);
@@ -706,20 +879,15 @@ public class ModalViewDefense implements Visibled {
         JLabel mat = new JLabel("Matrícula");
         mat.setOpaque(true);
         mat.setBackground(Color.decode("#D9D9D9"));
-        JLabel action = new JLabel("Ação");
-        action.setOpaque(true);
-        action.setBackground(Color.decode("#D9D9D9"));
+
 
         layout.setHorizontalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(
                                 layout.createSequentialGroup()
-                                        .addComponent(nomeTeacher, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE)
-                                        .addGap(5)
-                                        .addComponent(mat, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE)
-                                        .addGap(5)
-                                        .addComponent(action, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE)
-                                        .addGap(5)
+                                        .addComponent(nomeTeacher, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(mat, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE)
+
                         )
         );
 
@@ -731,15 +899,138 @@ public class ModalViewDefense implements Visibled {
                                         .addGap(5)
                                         .addComponent(mat, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
                                         .addGap(5)
-                                        .addComponent(action, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE)
-                                        .addGap(5)
                         )
         );
 
         return jPanel;
     }
+    private JPanel contentDefenseInfo(Defense defense){
+        JPanel jPanel = new JPanel();
+        GroupLayout layout = new GroupLayout(jPanel);
+        jPanel.setLayout(layout);
 
+        this.titleJobContainer = ModalViewDefense.containerLabelAndTitleTxt("Título do trabalho", defense.getDefenseTitle());
+        JPanel titleJob = this.titleJobContainer.panel;
+        this.titleJobContainer.panel.setBackground(Color.decode("#fffff7"));
+
+        this.typeDefenseContainer = containerComboBoxAndTitle("Tipo de defesa", Defense.parseTypeDefenseFormatString(defense.getTypeDefense()));
+        JPanel typeDefense = this.typeDefenseContainer.panel;
+        this.typeDefenseContainer.panel.setBackground(Color.decode("#fffff7"));
+
+        this.dateContainer = ModalViewDefense.containerLabelAndTitle("Data", Utils.dateForBr(defense.getDate()));
+        JPanel dateItem = this.dateContainer.panel;
+        this.dateContainer.panel.setBackground(Color.decode("#fffff7"));
+        this.hourContainer = ModalViewDefense.containerLabelAndTitle("Hora", Utils.hourOfTheDate(defense.getDate()));
+        this.hourContainer.panel.setBackground(Color.decode("#fffff7"));
+
+        this.localContainer = ModalViewDefense.containerLabelAndTitle("Local", defense.getLocal());
+        JPanel localItem = this.localContainer.panel;
+        this.localContainer.panel.setBackground(Color.decode("#fffff7"));
+
+        this.finalPontuation = ModalViewDefense.containerLabelAndTitle("Pontuação", Double.toString(defense.getFinalPontuation()));
+        this.finalPontuation.panel.setBackground(Color.decode("#fffff7"));
+        this.statusDefense = ModalViewDefense.containerLabelAndTitle("Status", defense.getStatus());
+        this.statusDefense.panel.setBackground(Color.decode("#fffff7"));
+        this.observation =ModalViewDefense.containerLabelAndTitle("Observacão", defense.getObservation());
+        this.observation.panel.setBackground(Color.decode("#fffff7"));
+
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGap(5)
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(titleJob, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(typeDefense, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        )
+                        .addGap(5)
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(dateItem, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(this.hourContainer.panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        )
+                        .addGap(5)
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(localItem, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(this.finalPontuation.panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+
+                        )
+                        .addGap(5)
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(this.statusDefense.panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(this.observation.panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        )
+        );
+
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                        .addComponent(titleJob)
+                                        .addComponent(typeDefense)
+                        )
+                        .addGap(10)
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                        .addComponent(dateItem)
+                                        .addComponent(this.hourContainer.panel)
+                        )
+                        .addGap(10)
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                        .addComponent(localItem)
+                                        .addComponent(this.finalPontuation.panel)
+                        )
+                        .addGap(10)
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                        .addComponent(this.statusDefense.panel)
+                                        .addComponent(this.observation.panel)
+                        )
+        );
+
+        return jPanel;
+
+    }
     private JPanel containerDefenseInfo(Defense defense){
+
+        JPanel jPanel = new JPanel();
+        jPanel.setBackground(Color.decode("#0ABFBF"));
+
+        GroupLayout layout = new GroupLayout(jPanel);
+        jPanel.setLayout(layout);
+
+        JLabel jLabel = new JLabel("Dados da Defesa");
+        jLabel.setFont(new Font("Ubuntu", Font.BOLD, 40));
+        jLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        jLabel.setForeground(Color.decode("#ffffff"));
+
+        JPanel content = contentDefenseInfo(defense);
+        content.setBackground(Color.decode("#fffff7"));
+
+        layout.setHorizontalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(content, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+
+        );
+
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addComponent(jLabel, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(content, GroupLayout.PREFERRED_SIZE, 500, GroupLayout.PREFERRED_SIZE)
+        );
+
+
+        return jPanel;
+    }
+    private static LabelAndTitleContainer containerLabelAndTitleTxt(String title, String content) {
+        LabelAndTitleContainer container = new LabelAndTitleContainer();
 
         JPanel jPanel = new JPanel();
         jPanel.setBackground(Color.decode("#FFFFFF"));
@@ -747,113 +1038,38 @@ public class ModalViewDefense implements Visibled {
         GroupLayout layout = new GroupLayout(jPanel);
         jPanel.setLayout(layout);
         layout.setAutoCreateGaps(true);
-        layout.setAutoCreateContainerGaps(true);
 
-        JLabel jLabel = new JLabel("Dados da Defesa");
-        jLabel.setFont(new Font("Ubuntu", Font.BOLD, 40));
+        JLabel titleLabel = new JLabel(title);
+        JTextArea titleJob = new JTextArea();
+        titleJob.setFocusable(false);
+        titleJob.setFont(new Font("Ubuntu", Font.PLAIN, 20));
+        titleJob.setEditable(false);
+        titleJob.setBackground(Color.decode("#D9D9D9"));
+        titleJob.setSize(new Dimension(500, 80));
+        titleJob.setLineWrap(true);
+        titleJob.setWrapStyleWord(true);
 
-        this.titleJobContainer = ModalViewDefense.containerLabelAndTitle("Título do trabalho", defense.getDefenseTitle());
-        JPanel titleJob = this.titleJobContainer.panel;
+        titleJob.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        this.typeDefenseContainer = containerComboBoxAndTitle("Tipo de defesa", Defense.parseTypeDefenseFormatString(defense.getTypeDefense()));
-        JPanel typeDefense = this.typeDefenseContainer.panel;
-
-        String inputFormat = "yyyy-MM-dd";
-        String outputFormat = "dd/MM/yyyy";
-
-        // Create input and output date format objects
-        DateFormat inputDateFormat = new SimpleDateFormat(inputFormat);
-        DateFormat outputDateFormat = new SimpleDateFormat(outputFormat);
-
-        try {
-            // Parse the input date string into a Date object
-            Date date = inputDateFormat.parse(defense.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString());
-
-            // Format the Date object into the desired output format
-            String outputDate = outputDateFormat.format(date);
-
-            this.dateContainer = ModalViewDefense.containerLabelAndTitle("Data", outputDate);
-
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-        JPanel dateItem = this.dateContainer.panel;
-
-        this.localContainer = ModalViewDefense.containerLabelAndTitle("Local", defense.getLocal());
-        JPanel localItem = this.localContainer.panel;
-
-        this.finalPontuation = ModalViewDefense.containerLabelAndTitle("Pontuação", Double.toString(defense.getFinalPontuation()));
-        this.statusDefense = ModalViewDefense.containerLabelAndTitle("Status", defense.getStatus());
-        this.observation =ModalViewDefense.containerLabelAndTitle("Observacão", defense.getObservation());
+        titleJob.setText(content);
 
         layout.setHorizontalGroup(
-                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addGroup(
-                            layout.createSequentialGroup()
-                                    .addComponent(jLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        )
-                        .addGap(5)
-                        .addGroup(
-                                layout.createSequentialGroup()
-                                        .addComponent(titleJob)
-                                        .addComponent(typeDefense)
-                        )
-                        .addGap(5)
-                        .addGroup(
-                                layout.createSequentialGroup()
-                                        .addComponent(dateItem)
-                                        .addComponent(localItem)
-                        )
-                        .addGap(5)
-                        .addGroup(
-                                layout.createSequentialGroup()
-                                        .addComponent(this.finalPontuation.panel)
-                                        .addComponent(this.statusDefense.panel)
-                        )
-                        .addGap(5)
-                        .addGroup(
-                                layout.createSequentialGroup()
-                                        .addComponent(this.observation.panel)
-                        )
+                layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(titleLabel)
+                        .addComponent(titleJob, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE)
         );
 
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
-                        .addGroup(
-                                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        )
-                        .addGap(10)
-                        .addGroup(
-                                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addComponent(titleJob)
-                                        .addComponent(typeDefense)
-                        )
-                        .addGap(10)
-                        .addGroup(
-                                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addComponent(dateItem)
-                                        .addComponent(localItem)
-                        )
-                        .addGap(10)
-                        .addGroup(
-                                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addComponent(this.finalPontuation.panel)
-                                        .addComponent(this.statusDefense.panel)
-
-                        )
-                        .addGap(10)
-                        .addGroup(
-                                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addComponent(this.observation.panel)
-                        )
+                        .addComponent(titleLabel)
+                        .addComponent(titleJob, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE)
         );
 
+        container.panel = jPanel;
+        container.jTextArea = titleJob;
 
-
-        return jPanel;
+        return container;
     }
-
     private static LabelAndTitleContainer containerLabelAndTitle(String title, String content) {
         LabelAndTitleContainer container = new LabelAndTitleContainer();
 
@@ -892,7 +1108,6 @@ public class ModalViewDefense implements Visibled {
 
         return container;
     }
-
     private static CheckBoxAndTitleContainer containerLabelAndTitle(String title, int status) {
         CheckBoxAndTitleContainer container = new CheckBoxAndTitleContainer();
 
@@ -936,8 +1151,6 @@ public class ModalViewDefense implements Visibled {
 
         return container;
     }
-
-
     private ComboBoxAndTitleContainer containerComboBoxAndTitle(String title, String content) {
         ComboBoxAndTitleContainer container = new ComboBoxAndTitleContainer();
 
@@ -991,6 +1204,38 @@ public class ModalViewDefense implements Visibled {
         return container;
     }
 
+    public void updateViewAndTeacherBoards(ArrayList<Teacher> teachers){
+
+        for(Component component: tableOfTeachers.getComponents()){
+            tableOfTeachers.remove(component);
+        }
+
+        tableOfTeachers.add(ModalViewDefense.createHeadTable());
+
+        boolean flip = true;
+
+        if(teachers != null) this.defense.setBoardOfTeachers(teachers);
+
+        if(getDefense().getBoardOfTeachers()!= null){
+
+            for(Teacher teacher: getDefense().getBoardOfTeachers()){
+
+                if(flip){
+                    tableOfTeachers.add(createTableRow(teacher.getName(), teacher.getRegister(), getDefense().getDefenseId(), teacher.getTeacherId(), "#F1F1F1"));
+                    flip = !flip;
+                }else{
+                    tableOfTeachers.add(createTableRow(teacher.getName(),  teacher.getRegister(), getDefense().getDefenseId(), teacher.getTeacherId(), "#D9D9D9"));
+                    flip = !flip;
+                }
+
+            }
+
+        }
+
+        tableOfTeachers.revalidate();
+        tableOfTeachers.repaint();
+
+    }
     private static JPanel createTopContainer(String title, Person person){
 
         JPanel jPanel5 = new JPanel();
@@ -1051,20 +1296,17 @@ public class ModalViewDefense implements Visibled {
         jFrame.setVisible(value);
 
     }
-
     public Defense getDefense() {
         return defense;
     }
-
     public void setDefense(Defense defense) {
         this.defense = defense;
     }
-
     private static class LabelAndTitleContainer {
         public JPanel panel;
         public JTextField textField;
+        public JTextArea jTextArea;
     }
-
     private static class ComboBoxAndTitleContainer {
         public JPanel panel;
         public JComboBox jComboBox;
@@ -1073,7 +1315,6 @@ public class ModalViewDefense implements Visibled {
         public JPanel panel;
         public JCheckBox jCheckBox;
     }
-
     private class AnyObject{
         private int value;
         private String text;

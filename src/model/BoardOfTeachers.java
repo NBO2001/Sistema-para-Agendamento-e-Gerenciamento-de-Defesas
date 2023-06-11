@@ -103,6 +103,26 @@ public class BoardOfTeachers extends ConnectionBase{
 
     }
 
+    public static boolean insert(int defenseId, int teacherId){
+        String sql = "INSERT INTO boardOfTeachers (teacher, defense_id) " +
+                "VALUES (?, ?)";
+
+        try{
+            PreparedStatement stmt = conexao.prepareStatement(sql);
+
+            stmt.setInt(1,teacherId);
+            stmt.setInt(2, defenseId);
+            int cnt = stmt.executeUpdate();
+
+            stmt.close();
+            return cnt == 1;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
     public static boolean delete(int defenseId, int teacherId){
 
         String sql = "DELETE FROM boardOfTeachers " +

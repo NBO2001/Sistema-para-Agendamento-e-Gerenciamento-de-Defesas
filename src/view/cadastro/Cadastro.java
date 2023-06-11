@@ -119,6 +119,7 @@ public class Cadastro implements Visibled {
 
         this.jFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.jFrame.setMinimumSize(new Dimension(800,900));
 
         // setBorder(BorderFactory.createLineBorder(Color.white));
         this.textFieldCPF2.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));

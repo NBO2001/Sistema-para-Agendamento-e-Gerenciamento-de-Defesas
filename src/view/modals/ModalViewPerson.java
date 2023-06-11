@@ -49,7 +49,7 @@ public class ModalViewPerson implements Visibled {
         jFrame.setMaximumSize(new Dimension(1000,900));
         jFrame.setMinimumSize(new Dimension(850,600));
         jFrame.setPreferredSize(new Dimension(1000,900));
-        jFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         jFrame.setBackground(Color.decode("#FFFFFF"));
         jFrame.setLocationRelativeTo(null);
 

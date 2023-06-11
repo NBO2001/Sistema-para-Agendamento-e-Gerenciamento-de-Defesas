@@ -7,6 +7,7 @@ import model.Teacher;
 import model.TeacherManager;
 import view.cadastrodefesa.CadastroDefesaVariant04;
 import view.gerenciacadastros.GerenciarCadastros;
+import view.modals.ModalViewDefense;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -35,6 +36,7 @@ public class ModalFindTeacher implements Visibled {
     private String oldSeach;
 
     private CadastroDefesaVariant04 cadastroDefesaVariant04;
+    private ModalViewDefense modalViewDefense;
 
     public ModalFindTeacher(String search, CadastroDefesaVariant04 cadastroDefesaVariant04, ArrayList<Teacher> teachersSelected){
         this.teachersSelected = teachersSelected;
@@ -50,6 +52,19 @@ public class ModalFindTeacher implements Visibled {
         }else{
             this.teachersOptions = TeacherManager.selectAll("");
         }
+
+        initialize();
+
+    }
+
+    public ModalFindTeacher( ModalViewDefense modalViewDefense, ArrayList<Teacher> teachersSelected){
+        this.teachersSelected = teachersSelected;
+
+        if(modalViewDefense != null){
+            this.modalViewDefense = modalViewDefense;
+        }
+
+        this.teachersOptions = TeacherManager.selectAll("");
 
         initialize();
 
@@ -554,6 +569,9 @@ public class ModalFindTeacher implements Visibled {
                 super.mouseClicked(e);
                 if(cadastroDefesaVariant04 != null){
                     cadastroDefesaVariant04.getDefense().setBoardOfTeachers(ModalFindTeacher.this.teachersSelected);
+                }
+                if(modalViewDefense != null){
+                    modalViewDefense.updateViewAndTeacherBoards(ModalFindTeacher.this.teachersSelected);
                 }
                 ModalFindTeacher.this.destroy();
 

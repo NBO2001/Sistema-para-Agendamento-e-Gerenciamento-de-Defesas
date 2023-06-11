@@ -203,7 +203,7 @@ public class Reports implements Visibled {
         StringBuilder csvContent = new StringBuilder();
 
         // Append the header row
-        csvContent.append("Title,Type_defense,Student_name,Student_Mat,Teacher_Name, Teacher_Mat,Date,Local,Status,Observation\n");
+        csvContent.append("Title,Type_defense,Student_name,Student_Mat,Teacher_Name, Teacher_Mat,Date,Local,Status,Punctuation,Observation\n");
 
         // Append the data rows to the CSV content
         for (Defense defense : defenses) {
@@ -219,9 +219,10 @@ public class Reports implements Visibled {
             String date = "\"" + Utils.dateBrForDateEua(defense.getDate()) + "\"";
             String local = "\"" + defense.getLocal() + "\"";
             String status = "\"" + defense.getStatus() + "\"";
+            String punctuation = "\"" + defense.getFinalPontuation() + "\"" ;
             String observation = "\"" + defense.getObservation() + "\"";
 
-            String[] row = {title, typeDefense,studenName,studenMat,teacherAdvision,teacherMat, date, local, status, observation};
+            String[] row = {title, typeDefense,studenName,studenMat,teacherAdvision,teacherMat, date, local, status,punctuation ,observation};
             csvContent.append(String.join(",", row)).append("\n");
         }
 
@@ -384,6 +385,14 @@ public class Reports implements Visibled {
 
             if(selectedValue == -1) defenses = defenseManager.selectAll(txtStudentName.getText(), txtTeacherName.getText(), startDate);
             else defenses = defenseManager.selectAll(txtStudentName.getText(), txtTeacherName.getText(), startDate, selectedValue);
+
+        } else if (txtDateStart.getText().isEmpty() && Utils.isValidDate(txtDateEnd.getText())) {
+
+            String startDate = Utils.dateBrForDateEua("01/01/1900");
+            String endDate = Utils.dateBrForDateEua(Utils.strToDateBr(txtDateEnd.getText()));
+
+            if(selectedValue == -1) defenses = defenseManager.selectAll(txtStudentName.getText(), txtTeacherName.getText(), startDate, endDate);
+            else defenses = defenseManager.selectAll(txtStudentName.getText(), txtTeacherName.getText(), startDate, endDate, selectedValue);
 
         } else if (Utils.isValidDate(txtDateStart.getText()) && Utils.isValidDate(txtDateEnd.getText())) {
 

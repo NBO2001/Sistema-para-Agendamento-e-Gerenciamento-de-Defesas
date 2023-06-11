@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class DefenseManager extends ConnectionBase{
 
@@ -39,17 +40,10 @@ public class DefenseManager extends ConnectionBase{
 
                 stmt.close();
                 generatedKeys.close();
-                sql = "INSERT INTO boardOfTeachers (teacher, defense_id) " +
-                        "VALUES (?, ?)";
-                stmt = conexao.prepareStatement(sql);
 
                 for(Teacher teacher: defense.getBoardOfTeachers()){
-                    stmt.setInt(1,teacher.getTeacherId());
-                    stmt.setInt(2, insertedIndex);
-                    stmt.executeUpdate();
+                    BoardOfTeachers.insert(insertedIndex, teacher.getTeacherId());
                 }
-
-                stmt.close();
 
             }
 
@@ -66,15 +60,13 @@ public class DefenseManager extends ConnectionBase{
         String sql = "UPDATE defense  SET type_defense = ?, defense_title=?, date=?, local=?, teacher_advisor=?, student_defending=?, status=?, final_pontuation=?, observation=? " +
                 " WHERE defense_id = ?";
 
-        // Create a SimpleDateFormat object to format the date
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         try {
             PreparedStatement stmt = conexao.prepareStatement(sql);
 
             stmt.setInt(1, defense.getTypeDefense());
             stmt.setString(2, defense.getDefenseTitle());
-            stmt.setString(3,  dateFormat.format(defense.getDate()).toString());
+            stmt.setString(3,  Utils.dateForStringEUAWithHour(defense.getDate()));
             stmt.setString(4, defense.getLocal() );
             stmt.setInt(5, defense.getTeacherAdvisor().getTeacherId());
             stmt.setInt(6, defense.getStudentDefending().getStudentId());
@@ -86,6 +78,77 @@ public class DefenseManager extends ConnectionBase{
             stmt.setInt(10, defense.getDefenseId());
 
             int updIfo = stmt.executeUpdate();
+
+            return updIfo != 0;
+
+        }catch (SQLException e) {
+            System.out.println(e);
+            return false;
+        }
+
+    }
+
+    public static boolean update(Defense defense, Defense oldDefense){
+
+        String sql = "UPDATE defense  SET type_defense = ?, defense_title=?, date=?, local=?, teacher_advisor=?, student_defending=?, status=?, final_pontuation=?, observation=? " +
+                " WHERE defense_id = ?";
+
+
+        try {
+            PreparedStatement stmt = conexao.prepareStatement(sql);
+
+            stmt.setInt(1, defense.getTypeDefense());
+            stmt.setString(2, defense.getDefenseTitle());
+            stmt.setString(3,  Utils.dateForStringEUAWithHour(defense.getDate()));
+            stmt.setString(4, defense.getLocal() );
+            stmt.setInt(5, defense.getTeacherAdvisor().getTeacherId());
+            stmt.setInt(6, defense.getStudentDefending().getStudentId());
+            stmt.setInt(7, defense.getStatus());
+
+            stmt.setDouble(8, defense.getFinalPontuation());
+            stmt.setString(9, defense.getObservation());
+
+            stmt.setInt(10, defense.getDefenseId());
+
+            int updIfo = stmt.executeUpdate();
+
+            ArrayList<Teacher> removed = new ArrayList<Teacher>();
+            ArrayList<Teacher> forInserted = new ArrayList<>();
+
+            for(Teacher teacher: oldDefense.getBoardOfTeachers()){
+
+                boolean flag = true;
+
+                for(Teacher teacher1: defense.getBoardOfTeachers()){
+                    if(teacher.getTeacherId() == teacher1.getTeacherId()){
+                        flag = false;
+                        break;
+                    }
+                }
+
+                if(flag) removed.add(teacher);
+
+            }
+
+
+
+           for(Teacher teacher: defense.getBoardOfTeachers()){
+
+               boolean flag = true;
+
+               for(Teacher teacher1: oldDefense.getBoardOfTeachers()){
+                   if(teacher.getTeacherId() == teacher1.getTeacherId()){
+                       flag = false;
+                       break;
+                   }
+               }
+
+               if(flag) forInserted.add(teacher);
+
+           }
+
+            for(Teacher teacher: removed) BoardOfTeachers.delete(defense.getDefenseId(), teacher.getTeacherId());
+            for(Teacher teacher: forInserted) BoardOfTeachers.insert(defense.getDefenseId(), teacher.getTeacherId());
 
             return updIfo != 0;
 
@@ -133,7 +196,7 @@ public class DefenseManager extends ConnectionBase{
                 student.setPersonId(resultSet.getInt("personId_student"));
                 student.setName(resultSet.getString("name_student"));
                 student.setSocialName(resultSet.getString("social_name_student"));
-                student.setBirthday((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("birthday_student")));
+                student.setBirthday(Utils.strToDateEUA(resultSet.getString("birthday_student")));
                 student.setCpf(resultSet.getString("cpf_student"));
                 student.setRg(resultSet.getString("rg_student"));
                 student.setEmail(resultSet.getString("email_student"));
@@ -147,7 +210,7 @@ public class DefenseManager extends ConnectionBase{
                 teacher.setPersonId(resultSet.getInt("personId_teacher"));
                 teacher.setName(resultSet.getString("name_teacher"));
                 teacher.setSocialName(resultSet.getString("social_name_teacher"));
-                teacher.setBirthday((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("birthday_teacher")));
+                teacher.setBirthday(Utils.strToDateEUA(resultSet.getString("birthday_teacher")));
                 teacher.setCpf(resultSet.getString("cpf_teacher"));
                 teacher.setRg(resultSet.getString("rg_teacher"));
                 teacher.setEmail(resultSet.getString("email_teacher"));
@@ -162,7 +225,7 @@ public class DefenseManager extends ConnectionBase{
                 defense.setFinalPontuation(resultSet.getDouble("final_pontuation"));
                 defense.setStatus(resultSet.getInt("status"));
                 defense.setObservation(resultSet.getString("observation"));
-                defense.setDate((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("date")));
+                defense.setDate(Utils.strToDateEUA(resultSet.getString("date")));
                 defense.setStudentDefending(student);
                 defense.setTeacherAdvisor(teacher);
 
@@ -171,7 +234,7 @@ public class DefenseManager extends ConnectionBase{
             }
 
             return defenses;
-        }catch (SQLException | ParseException e) {
+        }catch (SQLException e) {
             System.out.println(e);
 
             return null;
@@ -236,7 +299,7 @@ public class DefenseManager extends ConnectionBase{
                 student.setPersonId(resultSet.getInt("personId_student"));
                 student.setName(resultSet.getString("name_student"));
                 student.setSocialName(resultSet.getString("social_name_student"));
-                student.setBirthday((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("birthday_student")));
+                student.setBirthday(Utils.strToDateEUA(resultSet.getString("birthday_student")));
                 student.setCpf(resultSet.getString("cpf_student"));
                 student.setRg(resultSet.getString("rg_student"));
                 student.setEmail(resultSet.getString("email_student"));
@@ -250,7 +313,7 @@ public class DefenseManager extends ConnectionBase{
                 teacher.setPersonId(resultSet.getInt("personId_teacher"));
                 teacher.setName(resultSet.getString("name_teacher"));
                 teacher.setSocialName(resultSet.getString("social_name_teacher"));
-                teacher.setBirthday((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("birthday_teacher")));
+                teacher.setBirthday(Utils.strToDateEUA(resultSet.getString("birthday_teacher")));
                 teacher.setCpf(resultSet.getString("cpf_teacher"));
                 teacher.setRg(resultSet.getString("rg_teacher"));
                 teacher.setEmail(resultSet.getString("email_teacher"));
@@ -265,7 +328,7 @@ public class DefenseManager extends ConnectionBase{
                 defense.setFinalPontuation(resultSet.getDouble("final_pontuation"));
                 defense.setStatus(resultSet.getInt("status"));
                 defense.setObservation(resultSet.getString("observation"));
-                defense.setDate((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("date")));
+                defense.setDate(Utils.strToDateEUA(resultSet.getString("date")));
                 defense.setStudentDefending(student);
                 defense.setTeacherAdvisor(teacher);
 
@@ -274,7 +337,7 @@ public class DefenseManager extends ConnectionBase{
             }
 
             return defenses;
-        }catch (SQLException | ParseException e) {
+        }catch (SQLException e) {
             System.out.println(e);
 
             return null;
@@ -319,7 +382,7 @@ public class DefenseManager extends ConnectionBase{
                 student.setPersonId(resultSet.getInt("personId_student"));
                 student.setName(resultSet.getString("name_student"));
                 student.setSocialName(resultSet.getString("social_name_student"));
-                student.setBirthday((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("birthday_student")));
+                student.setBirthday(Utils.strToDateEUA(resultSet.getString("birthday_student")));
                 student.setCpf(resultSet.getString("cpf_student"));
                 student.setRg(resultSet.getString("rg_student"));
                 student.setEmail(resultSet.getString("email_student"));
@@ -333,7 +396,7 @@ public class DefenseManager extends ConnectionBase{
                 teacher.setPersonId(resultSet.getInt("personId_teacher"));
                 teacher.setName(resultSet.getString("name_teacher"));
                 teacher.setSocialName(resultSet.getString("social_name_teacher"));
-                teacher.setBirthday((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("birthday_teacher")));
+                teacher.setBirthday(Utils.strToDateEUA(resultSet.getString("birthday_teacher")));
                 teacher.setCpf(resultSet.getString("cpf_teacher"));
                 teacher.setRg(resultSet.getString("rg_teacher"));
                 teacher.setEmail(resultSet.getString("email_teacher"));
@@ -348,7 +411,7 @@ public class DefenseManager extends ConnectionBase{
                 defense.setFinalPontuation(resultSet.getDouble("final_pontuation"));
                 defense.setStatus(resultSet.getInt("status"));
                 defense.setObservation(resultSet.getString("observation"));
-                defense.setDate((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("date")));
+                defense.setDate(Utils.strToDateEUA(resultSet.getString("date")));
                 defense.setStudentDefending(student);
                 defense.setTeacherAdvisor(teacher);
 
@@ -357,7 +420,7 @@ public class DefenseManager extends ConnectionBase{
             }
 
             return defenses;
-        }catch (SQLException | ParseException e) {
+        }catch (SQLException e) {
             System.out.println(e);
 
             return null;
@@ -403,7 +466,7 @@ public class DefenseManager extends ConnectionBase{
                 student.setPersonId(resultSet.getInt("personId_student"));
                 student.setName(resultSet.getString("name_student"));
                 student.setSocialName(resultSet.getString("social_name_student"));
-                student.setBirthday((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("birthday_student")));
+                student.setBirthday(Utils.strToDateEUA(resultSet.getString("birthday_student")));
                 student.setCpf(resultSet.getString("cpf_student"));
                 student.setRg(resultSet.getString("rg_student"));
                 student.setEmail(resultSet.getString("email_student"));
@@ -417,7 +480,7 @@ public class DefenseManager extends ConnectionBase{
                 teacher.setPersonId(resultSet.getInt("personId_teacher"));
                 teacher.setName(resultSet.getString("name_teacher"));
                 teacher.setSocialName(resultSet.getString("social_name_teacher"));
-                teacher.setBirthday((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("birthday_teacher")));
+                teacher.setBirthday(Utils.strToDateEUA(resultSet.getString("birthday_teacher")));
                 teacher.setCpf(resultSet.getString("cpf_teacher"));
                 teacher.setRg(resultSet.getString("rg_teacher"));
                 teacher.setEmail(resultSet.getString("email_teacher"));
@@ -432,7 +495,7 @@ public class DefenseManager extends ConnectionBase{
                 defense.setFinalPontuation(resultSet.getDouble("final_pontuation"));
                 defense.setStatus(resultSet.getInt("status"));
                 defense.setObservation(resultSet.getString("observation"));
-                defense.setDate((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("date")));
+                defense.setDate(Utils.strToDateEUA(resultSet.getString("date")));
                 defense.setStudentDefending(student);
                 defense.setTeacherAdvisor(teacher);
 
@@ -441,7 +504,7 @@ public class DefenseManager extends ConnectionBase{
             }
 
             return defenses;
-        }catch (SQLException | ParseException e) {
+        }catch (SQLException e) {
             System.out.println(e);
 
             return null;
@@ -488,7 +551,7 @@ public class DefenseManager extends ConnectionBase{
                 student.setPersonId(resultSet.getInt("personId_student"));
                 student.setName(resultSet.getString("name_student"));
                 student.setSocialName(resultSet.getString("social_name_student"));
-                student.setBirthday((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("birthday_student")));
+                student.setBirthday(Utils.strToDateEUA(resultSet.getString("birthday_student")));
                 student.setCpf(resultSet.getString("cpf_student"));
                 student.setRg(resultSet.getString("rg_student"));
                 student.setEmail(resultSet.getString("email_student"));
@@ -502,7 +565,7 @@ public class DefenseManager extends ConnectionBase{
                 teacher.setPersonId(resultSet.getInt("personId_teacher"));
                 teacher.setName(resultSet.getString("name_teacher"));
                 teacher.setSocialName(resultSet.getString("social_name_teacher"));
-                teacher.setBirthday((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("birthday_teacher")));
+                teacher.setBirthday(Utils.strToDateEUA(resultSet.getString("birthday_teacher")));
                 teacher.setCpf(resultSet.getString("cpf_teacher"));
                 teacher.setRg(resultSet.getString("rg_teacher"));
                 teacher.setEmail(resultSet.getString("email_teacher"));
@@ -517,7 +580,7 @@ public class DefenseManager extends ConnectionBase{
                 defense.setFinalPontuation(resultSet.getDouble("final_pontuation"));
                 defense.setStatus(resultSet.getInt("status"));
                 defense.setObservation(resultSet.getString("observation"));
-                defense.setDate((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("date")));
+                defense.setDate(Utils.strToDateEUA(resultSet.getString("date")));
                 defense.setStudentDefending(student);
                 defense.setTeacherAdvisor(teacher);
 
@@ -526,7 +589,7 @@ public class DefenseManager extends ConnectionBase{
             }
 
             return defenses;
-        }catch (SQLException | ParseException e) {
+        }catch (SQLException e) {
             System.out.println(e);
 
             return null;
@@ -573,7 +636,7 @@ public class DefenseManager extends ConnectionBase{
                 student.setPersonId(resultSet.getInt("personId_student"));
                 student.setName(resultSet.getString("name_student"));
                 student.setSocialName(resultSet.getString("social_name_student"));
-                student.setBirthday((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("birthday_student")));
+                student.setBirthday(Utils.strToDateEUA(resultSet.getString("birthday_student")));
                 student.setCpf(resultSet.getString("cpf_student"));
                 student.setRg(resultSet.getString("rg_student"));
                 student.setEmail(resultSet.getString("email_student"));
@@ -587,7 +650,7 @@ public class DefenseManager extends ConnectionBase{
                 teacher.setPersonId(resultSet.getInt("personId_teacher"));
                 teacher.setName(resultSet.getString("name_teacher"));
                 teacher.setSocialName(resultSet.getString("social_name_teacher"));
-                teacher.setBirthday((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("birthday_teacher")));
+                teacher.setBirthday(Utils.strToDateEUA(resultSet.getString("birthday_teacher")));
                 teacher.setCpf(resultSet.getString("cpf_teacher"));
                 teacher.setRg(resultSet.getString("rg_teacher"));
                 teacher.setEmail(resultSet.getString("email_teacher"));
@@ -602,7 +665,7 @@ public class DefenseManager extends ConnectionBase{
                 defense.setFinalPontuation(resultSet.getDouble("final_pontuation"));
                 defense.setStatus(resultSet.getInt("status"));
                 defense.setObservation(resultSet.getString("observation"));
-                defense.setDate((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("date")));
+                defense.setDate(Utils.strToDateEUA(resultSet.getString("date")));
                 defense.setStudentDefending(student);
                 defense.setTeacherAdvisor(teacher);
 
@@ -611,7 +674,7 @@ public class DefenseManager extends ConnectionBase{
             }
 
             return defenses;
-        }catch (SQLException | ParseException e) {
+        }catch (SQLException e) {
             System.out.println(e);
 
             return null;
@@ -658,7 +721,7 @@ public class DefenseManager extends ConnectionBase{
                 student.setPersonId(resultSet.getInt("personId_student"));
                 student.setName(resultSet.getString("name_student"));
                 student.setSocialName(resultSet.getString("social_name_student"));
-                student.setBirthday((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("birthday_student")));
+                student.setBirthday(Utils.strToDateEUA(resultSet.getString("birthday_student")));
                 student.setCpf(resultSet.getString("cpf_student"));
                 student.setRg(resultSet.getString("rg_student"));
                 student.setEmail(resultSet.getString("email_student"));
@@ -672,7 +735,7 @@ public class DefenseManager extends ConnectionBase{
                 teacher.setPersonId(resultSet.getInt("personId_teacher"));
                 teacher.setName(resultSet.getString("name_teacher"));
                 teacher.setSocialName(resultSet.getString("social_name_teacher"));
-                teacher.setBirthday((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("birthday_teacher")));
+                teacher.setBirthday(Utils.strToDateEUA(resultSet.getString("birthday_teacher")));
                 teacher.setCpf(resultSet.getString("cpf_teacher"));
                 teacher.setRg(resultSet.getString("rg_teacher"));
                 teacher.setEmail(resultSet.getString("email_teacher"));
@@ -687,7 +750,7 @@ public class DefenseManager extends ConnectionBase{
                 defense.setFinalPontuation(resultSet.getDouble("final_pontuation"));
                 defense.setStatus(resultSet.getInt("status"));
                 defense.setObservation(resultSet.getString("observation"));
-                defense.setDate((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("date")));
+                defense.setDate(Utils.strToDateEUA(resultSet.getString("date")));
                 defense.setStudentDefending(student);
                 defense.setTeacherAdvisor(teacher);
 
@@ -696,7 +759,7 @@ public class DefenseManager extends ConnectionBase{
             }
 
             return defenses;
-        }catch (SQLException | ParseException e) {
+        }catch (SQLException e) {
             System.out.println(e);
 
             return null;
@@ -744,7 +807,7 @@ public class DefenseManager extends ConnectionBase{
                 student.setPersonId(resultSet.getInt("personId_student"));
                 student.setName(resultSet.getString("name_student"));
                 student.setSocialName(resultSet.getString("social_name_student"));
-                student.setBirthday((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("birthday_student")));
+                student.setBirthday(Utils.strToDateEUA(resultSet.getString("birthday_student")));
                 student.setCpf(resultSet.getString("cpf_student"));
                 student.setRg(resultSet.getString("rg_student"));
                 student.setEmail(resultSet.getString("email_student"));
@@ -758,7 +821,7 @@ public class DefenseManager extends ConnectionBase{
                 teacher.setPersonId(resultSet.getInt("personId_teacher"));
                 teacher.setName(resultSet.getString("name_teacher"));
                 teacher.setSocialName(resultSet.getString("social_name_teacher"));
-                teacher.setBirthday((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("birthday_teacher")));
+                teacher.setBirthday(Utils.strToDateEUA(resultSet.getString("birthday_teacher")));
                 teacher.setCpf(resultSet.getString("cpf_teacher"));
                 teacher.setRg(resultSet.getString("rg_teacher"));
                 teacher.setEmail(resultSet.getString("email_teacher"));
@@ -773,7 +836,7 @@ public class DefenseManager extends ConnectionBase{
                 defense.setFinalPontuation(resultSet.getDouble("final_pontuation"));
                 defense.setStatus(resultSet.getInt("status"));
                 defense.setObservation(resultSet.getString("observation"));
-                defense.setDate((new SimpleDateFormat("yyyy-MM-dd")).parse(resultSet.getString("date")));
+                defense.setDate(Utils.strToDateEUA(resultSet.getString("date")));
                 defense.setStudentDefending(student);
                 defense.setTeacherAdvisor(teacher);
 
@@ -782,7 +845,7 @@ public class DefenseManager extends ConnectionBase{
             }
 
             return defenses;
-        }catch (SQLException | ParseException e) {
+        }catch (SQLException e) {
             System.out.println(e);
 
             return null;
