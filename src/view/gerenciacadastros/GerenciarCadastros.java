@@ -6,7 +6,6 @@ import view.cadastro.Cadastro;
 import view.cadastroaluno.CadastroAluno;
 import view.cadastroprofessor.CadastroProfessor;
 import view.cadastrousuario.CadastroUsuario;
-import view.editPerson.EditPersonVariant01;
 import view.home.Home;
 import view.modals.ModalViewDefense;
 import view.modals.ModalViewPerson;
@@ -566,8 +565,7 @@ public class GerenciarCadastros implements Visibled {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-//                new EditPersonVariant01(GerenciarCadastros.this, person).setVisible(true);
-//                GerenciarCadastros.this.setVisible(false);
+
                 new ModalViewPerson(GerenciarCadastros.this,person).setVisible(true);
             }
         });

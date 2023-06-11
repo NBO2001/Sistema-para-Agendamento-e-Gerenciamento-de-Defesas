@@ -1,13 +1,9 @@
-package view.modalfindteacher;
+package view.modals;
 
 import interfaces.Visibled;
-import model.People;
-import model.Person;
 import model.Teacher;
 import model.TeacherManager;
 import view.cadastrodefesa.CadastroDefesaVariant04;
-import view.gerenciacadastros.GerenciarCadastros;
-import view.modals.ModalViewDefense;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

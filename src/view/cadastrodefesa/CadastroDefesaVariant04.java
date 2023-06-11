@@ -3,11 +3,8 @@ package view.cadastrodefesa;
 import interfaces.Visibled;
 import model.Defense;
 import model.DefenseManager;
-import model.StudentManager;
 import model.Teacher;
-import view.cadastro.Cadastro;
-import view.cadastroaluno.CadastroAluno;
-import view.modalfindteacher.ModalFindTeacher;
+import view.modals.ModalFindTeacher;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
