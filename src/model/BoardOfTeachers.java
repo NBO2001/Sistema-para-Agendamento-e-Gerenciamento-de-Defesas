@@ -64,7 +64,7 @@ public class BoardOfTeachers extends ConnectionBase{
     }
 
     /**
-     * The flag inform at the search for teacher id
+     * Retorna se um professor está em alguma banca.
      * */
     public static boolean containsInBase(int teacherId){
 

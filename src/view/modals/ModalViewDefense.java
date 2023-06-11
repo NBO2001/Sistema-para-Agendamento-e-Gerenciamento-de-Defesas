@@ -450,8 +450,10 @@ public class ModalViewDefense implements Visibled {
 
         if(defense != null && defense.getStatus() == 1){
             certificatePrint.setVisible(true);
+            callToDefense.setVisible(false);
         }else{
             certificatePrint.setVisible(false);
+            callToDefense.setVisible(true);
         }
 
 

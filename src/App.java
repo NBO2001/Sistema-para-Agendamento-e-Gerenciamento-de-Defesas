@@ -1,20 +1,24 @@
 import controller.ControllingManager;
-import model.Defense;
-import model.DefenseManager;
-import model.Student;
-import model.Teacher;
-import view.modalfindteacher.ModalFindTeacher;
-import view.modals.ModalViewDefense;
 
 import javax.swing.*;
-import java.util.ArrayList;
+
+/**
+ * Classe que inicia todo o sistema.
+ *
+ */
 
 public class App {
 
     public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                ControllingManager controllingManager = new ControllingManager();
 
-        ControllingManager controllingManager = new ControllingManager();
+                controllingManager.execute();
+            }
+        });
 
-        controllingManager.execute();
+
     }
 }
